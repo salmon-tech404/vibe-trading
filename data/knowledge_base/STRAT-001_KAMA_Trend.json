@@ -1,0 +1,76 @@
+﻿{
+  "id": "STRAT-001",
+  "name": "KAMA Adaptive Moving Average Trend Pullback",
+  "category": "Trend Following",
+  "metadata": {
+    "source_book": "Trading Systems and Methods, 6th Edition",
+    "author": "Perry J. Kaufman",
+    "primary_timeframe": "5m / 15m / 1h",
+    "market_regime": "Xu hướng định hướng mạnh (Efficiency Ratio > 0.55)"
+  },
+  "core_hypothesis": "Đường KAMA điều chỉnh độ trễ động học dựa trên tỷ số hiệu quả thị trường (Efficiency Ratio). Khi thị trường có xu hướng mạnh (ER cao), KAMA phản ứng nhanh như đường EMA(2); khi thị trường đi ngang ngẫu nhiên (ER thấp), KAMA làm phẳng như SMA(30) để lọc nhiễu. Điểm vào lệnh tại nhịp thoái lui (pullback) về KAMA trong pha xu hướng mang lại tỷ lệ R:R cao với rủi ro thấp nhất.",
+  "mathematical_indicators": [
+    {
+      "name": "Change",
+      "formula": "|Close(t) - Close(t-n)|",
+      "default_params": "n=10"
+    },
+    {
+      "name": "Volatility",
+      "formula": "Sum(|Close(i) - Close(i-1)|, i=t-n+1..t)",
+      "default_params": "n=10"
+    },
+    {
+      "name": "Efficiency Ratio (ER)",
+      "formula": "Change / Volatility",
+      "default_params": "Range: [0.0, 1.0]"
+    },
+    {
+      "name": "Smoothing Constant (SC)",
+      "formula": "[ER * (2/(2+1) - 2/(30+1)) + 2/(30+1)]^2",
+      "default_params": "fast=2, slow=30"
+    },
+    {
+      "name": "KAMA",
+      "formula": "KAMA(t-1) + SC * (Close(t) - KAMA(t-1))",
+      "default_params": "period=10, fast=2, slow=30"
+    },
+    {
+      "name": "ATR",
+      "formula": "EMA(TrueRange, 14)",
+      "default_params": "period=14"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Bộ lọc xu hướng HTF (1H): Close > KAMA(1H) VÀ Độ dốc KAMA_Slope > +0.05% trên mỗi nến.",
+        "Bộ lọc động lượng (ER): Kaufman ER(10) của khung hiện tại > 0.55 (loại bỏ vùng sideway).",
+        "Tín hiệu kích hoạt (Trigger): Nến giảm hồi quy chạm KAMA(10) khung 5m/15m, giá Low xuyên nhẹ qua KAMA nhưng Close đóng cửa ngược lại trên KAMA với nến rút chân râu dưới chiếm >= 40% thân nến."
+      ],
+      "execution_type": "LIMIT tại mức KAMA(10) hoặc MARKET ngay khi nến trigger đóng cửa."
+    },
+    "risk_management": {
+      "stop_loss_formula": "KAMA(t) - (1.5 * ATR(14)) đối với lệnh LONG; KAMA(t) + (1.5 * ATR(14)) đối với lệnh SHORT.",
+      "max_risk_per_trade_pct": 1.5,
+      "circuit_breaker_condition": "Nến đóng cửa hoàn toàn dưới đường KAMA 2 chu kỳ liên tiếp kèm ER sụt giảm dưới 0.30 -> Cắt bỏ vị thế khẩn cấp."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "TP1", "ratio": "1.5R", "close_ratio": "50%" },
+        { "level": "TP2", "ratio": "2.8R", "close_ratio": "30%" },
+        { "level": "TP3", "ratio": "Runner", "close_ratio": "20%" }
+      ],
+      "trailing_stop_rule": "Khi đạt TP1, dời Stop Loss về mức Breakeven (Giá vào). Khi đạt TP2, dời Stop Loss trailing theo đường KAMA(t) của khung 15m.",
+      "time_based_stop": "Tối đa 18 nến (90 phút với khung 5m). Nếu giá chưa đạt TP1 và ER giảm về dưới 0.25 -> Đóng lệnh chủ động."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Giá phá thủng KAMA và đi sâu qua SL mà không bật lại",
+      "diagnosis": "Thị trường chuyển pha sang phân phối đỉnh/đáy hoặc có tin tức bất thường làm vỡ cấu trúc xu hướng",
+      "corrective_action": "Nâng ngưỡng lọc Kaufman ER tối thiểu từ 0.55 lên 0.65 và kiểm tra khối lượng giao dịch trước khi vào lệnh."
+    }
+  ]
+}

@@ -1,0 +1,280 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Vibe-Trading AI Quant Research Labs
+// ==============================================================================================================
+// 🚀 VIBE ALPHA LEADING SCALPER PRO — DYNAMIC CLIMAX & ADAPTIVE TREND ENGINE (Pine Script v6)
+// Tính năng: Chu trình Mua-Bán rõ ràng, Cảnh báo Sớm Chuẩn bị (Prep Alerts), Mục tiêu TP/SL động trên HUD
+// ==============================================================================================================
+
+//@version=6
+indicator("Vibe Alpha Leading Scalper Pro", shorttitle="Vibe Alpha Pro", overlay=true, precision=2, max_labels_count=500, max_lines_count=500)
+
+// ==============================================================================================================
+// 1. CÀI ĐẶT THUẬT TOÁN & ĐỘ NHẠY
+// ==============================================================================================================
+
+var string G_MAIN    = "⚡ 1. Độ nhạy Tín hiệu & Chế độ"
+var string G_PREP    = "🔔 2. Cảnh báo Sớm Chuẩn Bị (Early Warning)"
+var string G_CLIMAX  = "🎯 3. Bộ lọc Đỉnh/Đáy Cao trào (Leading Climax)"
+var string G_RISK    = "🛡️ 4. Quản lý Vốn & Trailing Stop Động"
+var string G_VISUAL  = "🎨 5. Giao diện & Hiển thị"
+
+// Chế độ & Độ nhạy
+signalMode   = input.string("Scalp Động (Climax + Trend)", title="Chế độ Tín hiệu", options=["Scalp Động (Climax + Trend)", "Theo Xu hướng (Trend Only)", "Bắt Đỉnh/Đáy (Climax Only)"], group=G_MAIN)
+kamaPeriod   = input.int(7, title="Chu kỳ nhạy sóng (KAMA)", minval=2, maxval=20, group=G_MAIN)
+erThreshold  = input.float(0.20, title="Lọc nhiễu thị trường (ER Filter)", minval=0.05, maxval=0.8, step=0.05, group=G_MAIN)
+cooldownBars = input.int(2, title="Khoảng cách nến tối thiểu giữa 2 tín hiệu", minval=1, maxval=10, group=G_MAIN)
+
+// Cảnh báo Sớm Chuẩn bị
+showPrepWarn = input.bool(true, title="Hiện Chấm Cảnh báo Chuẩn bị (Chấm Vàng: Canh Mua / Cam: Canh Bán)", group=G_PREP)
+
+// Climax & Exhaustion Settings
+enableClimax = input.bool(true, title="Bật Bắt Đỉnh Xả / Đáy Gom Cao Trào (Blow-off Top)", group=G_CLIMAX)
+climaxLookback = input.int(8, title="Số nến xét Đỉnh/Đáy cục bộ", minval=3, maxval=30, group=G_CLIMAX)
+wickRatio    = input.float(1.2, title="Tỷ lệ Râu nến đảo chiều / Thân nến", minval=0.5, maxval=3.0, step=0.1, group=G_CLIMAX)
+bandMult     = input.float(1.8, title="Độ mở rộng Dải biến động (KAMA Band Mult)", minval=1.0, maxval=4.0, step=0.1, group=G_CLIMAX)
+
+// Risk & Dynamic Trailing
+atrLength    = input.int(10, title="Chu kỳ ATR", minval=1, group=G_RISK)
+atrSlMult    = input.float(1.6, title="Hệ số Trailing Stop (ATR Mult)", minval=0.5, maxval=4.0, step=0.1, group=G_RISK)
+enableTrailExit = input.bool(true, title="Tự động Kích hoạt Thoát lệnh khi Thủng Trailing Stop", group=G_RISK)
+showTrailing = input.bool(true, title="Hiện đường Trailing Stop bảo vệ vốn", group=G_RISK)
+showBands    = input.bool(true, title="Hiện Dải Biên độ Động KAMA Envelope", group=G_RISK)
+
+// Visuals & HUD
+showHud      = input.bool(true, title="Hiện Bảng HUD Dashboard ở góc", group=G_VISUAL)
+hudPosition  = input.string("Top Right", title="Vị trí HUD", options=["Top Right", "Bottom Right", "Top Left", "Bottom Left"], group=G_VISUAL)
+
+// ==============================================================================================================
+// 2. QUANT ENGINE: KAUFMAN ADAPTIVE SPEED & VOLATILITY BANDS
+// ==============================================================================================================
+
+priceChange   = math.abs(close - close[kamaPeriod])
+volatilitySum = math.sum(math.abs(close - close[1]), kamaPeriod)
+er            = volatilitySum != 0 ? priceChange / volatilitySum : 0.0
+
+fastSC = 2.0 / (2.0 + 1.0)
+slowSC = 2.0 / (16.0 + 1.0)
+sc     = math.pow(er * (fastSC - slowSC) + slowSC, 2)
+
+var float kama = na
+kama := na(kama[1]) ? close : kama[1] + sc * (close - kama[1])
+
+atrVal    = ta.atr(atrLength)
+upperBand = kama + (atrVal * bandMult)
+lowerBand = kama - (atrVal * bandMult)
+
+emaFast = ta.ema(close, 8)
+emaSlow = ta.ema(close, 21)
+
+isBullTrend = (close > kama) and (emaFast >= emaSlow)
+isBearTrend = (close < kama) and (emaFast <= emaSlow)
+isTrending  = er >= erThreshold
+
+// ==============================================================================================================
+// 3. MOMENTUM, OSCILLATOR & DIVERGENCE ENGINE
+// ==============================================================================================================
+
+rsiVal  = ta.rsi(close, 10)
+mfiVal  = ta.mfi(hlc3, 10)
+fastOsc = (rsiVal + mfiVal) / 2.0
+
+// Phân kỳ sớm (Divergence Detection)
+divLow1  = ta.lowest(low, 8)
+oscLow1  = ta.lowest(fastOsc, 8)
+bullDiv  = (low <= divLow1[1]) and (fastOsc > oscLow1[1]) and (fastOsc < 45)
+
+divHigh1 = ta.highest(high, 8)
+oscHigh1 = ta.highest(fastOsc, 8)
+bearDiv  = (high >= divHigh1[1]) and (fastOsc < oscHigh1[1]) and (fastOsc > 55)
+
+// ==============================================================================================================
+// 4. CLIMAX EXHAUSTION & EARLY PREPARATION SIGNALS (CẢNH BÁO SỚM ĐỂ CHUẨN BỊ)
+// ==============================================================================================================
+
+candleBody = math.abs(close - open)
+upperWick  = high - math.max(open, close)
+lowerWick  = math.min(open, close) - low
+
+// 🔔 Tín hiệu Chuẩn bị Bán / Cảnh báo Đỉnh Rủi ro (Prep Sell Warning)
+// Khi giá chạm/vượt Upper Band hoặc Oscillator quá mua cực hạn và có râu trên
+prepSell = (high >= upperBand or fastOsc >= 68) and (upperWick >= candleBody * 0.8) and (close > kama)
+
+// 🔔 Tín hiệu Chuẩn bị Mua / Cảnh báo Đáy Gom hàng (Prep Buy Warning)
+// Khi giá chạm/thủng Lower Band hoặc Oscillator quá bán cực hạn và có râu dưới
+prepBuy = (low <= lowerBand or fastOsc <= 32) and (lowerWick >= candleBody * 0.8) and (close < kama)
+
+// Nhận diện Đỉnh cao trào / Blow-off Top (Khớp Bán chính thức tại 79.2k)
+isLocalHigh   = high >= ta.highest(high, climaxLookback)[1]
+isOverbought  = (fastOsc >= 65) or (high >= upperBand)
+hasUpperReject= (upperWick >= candleBody * wickRatio) or (upperWick >= atrVal * 0.7)
+climaxSell    = enableClimax and isLocalHigh and isOverbought and hasUpperReject and (close < high - atrVal * 0.3)
+
+// Nhận diện Đáy cao trào / Capitulation Bottom
+isLocalLow    = low <= ta.lowest(low, climaxLookback)[1]
+isOversold    = (fastOsc <= 35) or (low <= lowerBand)
+hasLowerReject= (lowerWick >= candleBody * wickRatio) or (lowerWick >= atrVal * 0.7)
+climaxBuy     = enableClimax and isLocalLow and isOversold and hasLowerReject and (close > low + atrVal * 0.3)
+
+// Swing Liquidity Sweeps
+pivotLen  = 2
+swingHigh = ta.pivothigh(high, pivotLen, pivotLen)
+swingLow  = ta.pivotlow(low, pivotLen, pivotLen)
+
+var float lastHigh = na
+var float lastLow  = na
+if not na(swingHigh)
+    lastHigh := high[pivotLen]
+if not na(swingLow)
+    lastLow  := low[pivotLen]
+
+bullSweep = not na(lastLow) and (low < lastLow) and (close > lastLow) and (close > open)
+bearSweep = not na(lastHigh) and (high > lastHigh) and (close < lastHigh) and (close < open)
+
+// ==============================================================================================================
+// 5. BỘ LỌC TÍN HIỆU ĐỘNG & QUẢN LÝ CHU TRÌNH MUA - BÁN (BUY/SELL CYCLE ENGINE)
+// ==============================================================================================================
+
+// Điều kiện Mua Xu hướng & Bắt đáy
+rawBuyTrend   = ta.crossover(close, kama) and (fastOsc > 45)
+rawBuyPullback= isBullTrend and (low <= emaFast) and (close > emaFast) and (close > open) and (fastOsc > 45)
+rawBuyReversal= climaxBuy or (bullSweep and fastOsc < 40) or bullDiv
+
+// Điều kiện Bán Xu hướng & Bắt đỉnh
+rawSellTrend   = ta.crossunder(close, kama) and (fastOsc < 55)
+rawSellPullback= isBearTrend and (high >= emaFast) and (close < emaFast) and (close < open) and (fastOsc < 55)
+rawSellReversal= climaxSell or (bearSweep and fastOsc > 60) or bearDiv
+
+// Tổng hợp điều kiện theo chế độ
+buyCondition = false
+sellCondition = false
+
+if signalMode == "Scalp Động (Climax + Trend)"
+    buyCondition  := rawBuyTrend or rawBuyPullback or rawBuyReversal
+    sellCondition := rawSellTrend or rawSellPullback or rawSellReversal
+else if signalMode == "Theo Xu hướng (Trend Only)"
+    buyCondition  := rawBuyTrend or rawBuyPullback
+    sellCondition := rawSellTrend or rawSellPullback
+else // Climax Only
+    buyCondition  := rawBuyReversal
+    sellCondition := rawSellReversal
+
+// Quản lý Trạng thái Vị thế (Chu trình Mua -> Bán -> Mua)
+var int activePos    = 0 // 1: Long, -1: Short
+var int lastBuyBar   = -100
+var int lastSellBar  = -100
+var float entryPrice = na
+var float trailStop  = na
+
+// Tính toán Trailing Stop
+if activePos == 1
+    newStop   = close - (atrVal * atrSlMult)
+    trailStop := na(trailStop[1]) ? newStop : math.max(trailStop[1], newStop)
+else if activePos == -1
+    newStop   = close + (atrVal * atrSlMult)
+    trailStop := na(trailStop[1]) ? newStop : math.min(trailStop[1], newStop)
+else
+    trailStop := na
+
+// Kích hoạt Thoát lệnh Trailing Stop (Bảo vệ Lợi Nhuận)
+trailLongExit  = enableTrailExit and (activePos == 1) and (close < trailStop)
+trailShortExit = enableTrailExit and (activePos == -1) and (close > trailStop)
+
+// Xác thực Tín hiệu Hợp lệ (Đảm bảo chu trình MUA -> BÁN xen kẽ, chống spam)
+validBuy  = buyCondition and (activePos != 1) and ((bar_index - lastBuyBar) >= cooldownBars)
+validSell = (sellCondition or trailLongExit) and (activePos != -1) and ((bar_index - lastSellBar) >= cooldownBars)
+
+if validBuy
+    activePos   := 1
+    lastBuyBar  := bar_index
+    entryPrice  := close
+    trailStop   := close - (atrVal * atrSlMult)
+
+if validSell
+    activePos   := -1
+    lastSellBar := bar_index
+    entryPrice  := close
+    trailStop   := close + (atrVal * atrSlMult)
+
+// Mục tiêu TP1, TP2
+tp1Price = activePos == 1 ? (entryPrice + 1.5 * atrVal) : activePos == -1 ? (entryPrice - 1.5 * atrVal) : na
+tp2Price = activePos == 1 ? (entryPrice + 3.0 * atrVal) : activePos == -1 ? (entryPrice - 3.0 * atrVal) : na
+
+// ==============================================================================================================
+// 6. HIỂN THỊ TRỰC QUAN CHUẨN QUANT (CLEAN VISUALS & WARNINGS)
+// ==============================================================================================================
+
+// Đường Xu hướng Thích ứng KAMA
+kamaCol = isBullTrend ? color.new(#00E676, 10) : isBearTrend ? color.new(#FF1744, 10) : color.new(#78909C, 50)
+plot(kama, title="KAMA Trendline", color=kamaCol, linewidth=2)
+
+// Dải Biên độ Động (Volatility Envelope)
+pUpper = plot(showBands ? upperBand : na, title="Upper Dynamic Band", color=color.new(#FF5252, 60), style=plot.style_line, linewidth=1)
+pLower = plot(showBands ? lowerBand : na, title="Lower Dynamic Band", color=color.new(#00E676, 60), style=plot.style_line, linewidth=1)
+fill(pUpper, pLower, color=color.new(#2962FF, 95), title="Volatility Channel Fill")
+
+// Đường Trailing Stop Bảo vệ Vốn
+plot(showTrailing and not na(trailStop) ? trailStop : na, title="Trailing Stop", color=activePos == 1 ? color.new(#00E676, 20) : color.new(#FF1744, 20), style=plot.style_linebr, linewidth=2)
+
+// 🟢 TÍN HIỆU MUA CHÍNH THỨC (Tam giác Xanh lớn dưới nến)
+plotshape(validBuy, title="🟢 Điểm MUA (Buy Entry)", style=shape.triangleup, location=location.belowbar, color=color.new(#00E676, 0), size=size.small)
+
+// 🔴 TÍN HIỆU BÁN / CHỐT LỜI CHÍNH THỨC (Tam giác Đỏ lớn trên nến)
+plotshape(validSell, title="🔴 Điểm BÁN / THOÁT (Sell/Exit Entry)", style=shape.triangledown, location=location.abovebar, color=color.new(#FF1744, 0), size=size.small)
+
+// 🟡 CHẤM CẢNH BÁO CHUẨN BỊ MUA (Prep Buy Warning — Chấm vàng dưới nến)
+plotshape(showPrepWarn and prepBuy and not validBuy and activePos != 1, title="🟡 Cảnh báo Chuẩn bị Mua", style=shape.circle, location=location.belowbar, color=color.new(#FFD600, 0), size=size.tiny)
+
+// 🟠 CHẤM CẢNH BÁO CHUẨN BỊ BÁN (Prep Sell Warning — Chấm cam trên nến)
+plotshape(showPrepWarn and prepSell and not validSell and activePos != -1, title="🟠 Cảnh báo Chuẩn bị Bán", style=shape.circle, location=location.abovebar, color=color.new(#FF6D00, 0), size=size.tiny)
+
+// ==============================================================================================================
+// 7. BẢNG THÔNG SỐ HUD DASHBOARD GÓC MÀN HÌNH (THỜI GIAN THỰC)
+// ==============================================================================================================
+
+var table hud = na
+tPos = hudPosition == "Top Right" ? position.top_right : hudPosition == "Bottom Right" ? position.bottom_right : hudPosition == "Top Left" ? position.top_left : position.bottom_left
+
+if barstate.islast and showHud
+    hud := table.new(tPos, 2, 7, bgcolor=color.new(#131722, 10), border_color=color.new(#363c4e, 30), border_width=1)
+    
+    table.cell(hud, 0, 0, "🚀 VIBE RADAR", bgcolor=color.new(#2962FF, 10), text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 0, activePos == 1 ? "🟢 ĐANG LONG" : activePos == -1 ? "🔴 ĐANG SHORT" : "⚪ CHỜ LỆNH", bgcolor=activePos == 1 ? color.new(#00C853, 30) : activePos == -1 ? color.new(#D50000, 30) : color.new(#2962FF, 10), text_color=color.white, text_size=size.small)
+    
+    regStr = isBullTrend ? "TĂNG (BULL)" : isBearTrend ? "GIẢM (BEAR)" : "ĐI NGANG (CHOP)"
+    regBg  = isBullTrend ? color.new(#00C853, 20) : isBearTrend ? color.new(#D50000, 20) : color.new(#78909C, 30)
+    table.cell(hud, 0, 1, "Xu Hướng", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 1, regStr, bgcolor=regBg, text_color=color.white, text_size=size.small)
+    
+    // Trạng thái chuẩn bị & Khuyến nghị hành động
+    prepStateStr = prepSell ? "⚠️ CHUẨN BỊ BÁN / TP" : prepBuy ? "⚠️ CHUẨN BỊ CANH MUA" : high >= upperBand ? "QUÁ MUA (CLIMAX)" : low <= lowerBand ? "QUÁ BÁN (DIP)" : "BÌNH THƯỜNG"
+    prepStateBg  = prepSell ? color.new(#FF6D00, 30) : prepBuy ? color.new(#FFD600, 30) : high >= upperBand ? color.new(#D50000, 30) : low <= lowerBand ? color.new(#00C853, 30) : color.new(#263238, 30)
+    table.cell(hud, 0, 2, "Hành Động Sớm", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 2, prepStateStr, bgcolor=prepStateBg, text_color=color.white, text_size=size.small)
+
+    table.cell(hud, 0, 3, "Lực Sóng (ER)", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 3, str.tostring(er, "#.##") + (isTrending ? " (Mạnh)" : " (Nhiễu)"), text_color=isTrending ? color.green : color.orange, text_size=size.small)
+    
+    table.cell(hud, 0, 4, "Động Lượng Osc", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 4, str.tostring(fastOsc, "#.#"), text_color=fastOsc > 50 ? color.green : color.red, text_size=size.small)
+    
+    // Mức giá Stop Loss & Target TP1/TP2
+    slStr = not na(trailStop) ? str.tostring(trailStop, "#.##") : "--"
+    table.cell(hud, 0, 5, "Trailing Stop (SL)", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 5, slStr, text_color=color.yellow, text_size=size.small)
+
+    tpStr = not na(tp1Price) ? str.tostring(tp1Price, "#.##") : "--"
+    table.cell(hud, 0, 6, "Mục Tiêu TP 1", text_color=color.silver, text_size=size.small)
+    table.cell(hud, 1, 6, tpStr, text_color=color.aqua, text_size=size.small)
+
+// ==============================================================================================================
+// 8. CẢNH BÁO WEBHOOK & TỰ ĐỘNG HÓA ĐA TẦNG
+// ==============================================================================================================
+
+// Cảnh báo khớp lệnh chính thức (MUA / BÁN)
+alertcondition(validBuy, title="🟢 1. Tín hiệu Khớp MUA (Buy Entry)", message='{"action":"BUY","ticker":"{{ticker}}","price":{{close}},"strategy":"VIBE_ALPHA_PRO"}')
+alertcondition(validSell, title="🔴 2. Tín hiệu Khớp BÁN / EXIT (Sell Entry)", message='{"action":"SELL","ticker":"{{ticker}}","price":{{close}},"strategy":"VIBE_ALPHA_PRO"}')
+
+// Cảnh báo chuẩn bị sớm (Pre-alert)
+alertcondition(prepBuy, title="🟡 3. Cảnh báo SỚM Chuẩn bị MUA (Prep Buy)", message='{"action":"PREP_BUY","ticker":"{{ticker}}","price":{{close}},"message":"Gia vao vung qua ban, chuan bi Mua"}')
+alertcondition(prepSell, title="🟠 4. Cảnh báo SỚM Chuẩn bị BÁN (Prep Sell)", message='{"action":"PREP_SELL","ticker":"{{ticker}}","price":{{close}},"message":"Gia vao vung dinh qua mua, chuan bi Chot loi/Ban"}')
+

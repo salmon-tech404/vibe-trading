@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<trading_knowledge_base version="2.0">
+
+  <!-- ==================================================================== -->
+  <!-- CATEGORY 1: TREND FOLLOWING & ADAPTIVE SYSTEMS                      -->
+  <!-- ==================================================================== -->
+  <category name="Trend Following">
+
+    <!-- SKILL-001: KAMA ADAPTIVE TREND PULLBACK -->
+    <skill id="SKILL-001">
+      <metadata>
+        <name>KAMA Adaptive Moving Average Trend Pullback</name>
+        <source_book>Trading Systems and Methods, 6th Edition</source_book>
+        <author>Perry J. Kaufman</author>
+        <primary_timeframe>5m / 15m / 1h</primary_timeframe>
+        <market_regime>Xu hướng định hướng mạnh (Efficiency Ratio > 0.55)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Đường KAMA điều chỉnh độ trễ động học dựa trên tỷ số hiệu quả thị trường (Efficiency Ratio). Khi thị trường có xu hướng mạnh (ER cao), KAMA phản ứng nhanh như đường EMA(2); khi thị trường đi ngang ngẫu nhiên (ER thấp), KAMA làm phẳng như SMA(30) để lọc nhiễu. Điểm vào lệnh tại nhịp thoái lui (pullback) về KAMA trong pha xu hướng mang lại tỷ lệ R:R cao với rủi ro thấp nhất.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="Change" formula="|Close(t) - Close(t-n)|" default_params="n=10"/>
+        <indicator name="Volatility" formula="Sum(|Close(i) - Close(i-1)|, i=t-n+1..t)" default_params="n=10"/>
+        <indicator name="Efficiency Ratio (ER)" formula="Change / Volatility" default_params="Range: [0.0, 1.0]"/>
+        <indicator name="Smoothing Constant (SC)" formula="[ER * (2/(2+1) - 2/(30+1)) + 2/(30+1)]^2" default_params="fast=2, slow=30"/>
+        <indicator name="KAMA" formula="KAMA(t-1) + SC * (Close(t) - KAMA(t-1))" default_params="period=10, fast=2, slow=30"/>
+        <indicator name="ATR" formula="EMA(TrueRange, 14)" default_params="period=14"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Bộ lọc xu hướng HTF (1H): Close > KAMA(1H) VÀ Độ dốc KAMA_Slope > +0.05% trên mỗi nến.</condition>
+          <condition id="2">Bộ lọc động lượng (ER): Kaufman ER(10) của khung hiện tại > 0.55 (loại bỏ vùng sideway).</condition>
+          <condition id="3">Tín hiệu kích hoạt (Trigger): Nến giảm hồi quy chạm KAMA(10) khung 5m/15m, giá Low xuyên nhẹ qua KAMA nhưng Close đóng cửa ngược lại trên KAMA với nến rút chân râu dưới chiếm >= 40% thân nến.</condition>
+          <execution_type>LIMIT đặt tại mức KAMA(10) hoặc MARKET ngay khi nến trigger đóng cửa.</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>KAMA(t) - (1.5 * ATR(14)) đối với lệnh LONG; KAMA(t) + (1.5 * ATR(14)) đối với lệnh SHORT.</stop_loss_formula>
+          <max_risk_per_trade_pct>1.5% tổng số dư tài khoản.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Nến đóng cửa hoàn toàn dưới đường KAMA 2 chu kỳ liên tiếp kèm ER sụt giảm dưới 0.30 -> Cắt bỏ vị thế khẩn cấp.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="TP1" ratio="1.5R" close_ratio="50%"/>
+          <take_profit_target level="TP2" ratio="2.8R" close_ratio="30%"/>
+          <take_profit_target level="TP3" ratio="Runner" close_ratio="20%"/>
+          <trailing_stop_rule>Khi đạt TP1, dời Stop Loss về mức Breakeven (Giá vào). Khi đạt TP2, dời Stop Loss trailing theo đường KAMA(t) của khung 15m.</trailing_stop_rule>
+          <time_based_stop>Tối đa 18 nến (90 phút với khung 5m). Nếu giá chưa đạt TP1 và ER giảm về dưới 0.25 -> Đóng lệnh chủ động.</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Giá phá thủng KAMA và đi sâu qua SL mà không bật lại" diagnosis="Thị trường chuyển pha sang phân phối đỉnh/đáy hoặc có tin tức bất thường làm vỡ cấu trúc xu hướng" corrective_action="Nâng ngưỡng lọc Kaufman ER tối thiểu từ 0.55 lên 0.65 và kiểm tra khối lượng giao dịch trước khi vào lệnh."/>
+      </post_mortem_heuristics>
+    </skill>
+
+    <!-- SKILL-002: AL BROOKS TREND BAR & MICRO DOUBLE BOTTOM -->
+    <skill id="SKILL-002">
+      <metadata>
+        <name>Price Action Strong Trend Bar & Micro Double Bottom (MDB)</name>
+        <source_book>Trading Price Action Trends</source_book>
+        <author>Al Brooks</author>
+        <primary_timeframe>5m / 15m</primary_timeframe>
+        <market_regime>Xu hướng tăng/giảm mạnh mẽ (Always In Long / Always In Short)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Các thanh nến có thân nến lớn chiếm hơn 70% toàn bộ chiều dài nến (Trend Bar) thể hiện sự kiểm soát tuyệt đối của dòng tiền tổ chức. Khi xuất hiện mô hình 2 đáy vi mô (Micro Double Bottom) kiểm tra lại đường EMA(20), phe bán cạn kiệt lực ép và bên mua sẽ tái kích hoạt đà đẩy giá tiếp diễn.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="EMA20" formula="EMA(Close, 20)" default_params="period=20"/>
+        <indicator name="TrendBarRatio" formula="|Close - Open| / (High - Low)" default_params="threshold >= 0.70"/>
+        <indicator name="RelativeVolume" formula="Volume / SMA(Volume, 20)" default_params="threshold >= 1.6"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Thị trường đang nằm trên EMA(20) liên tục ít nhất 10 nến.</condition>
+          <condition id="2">Mô hình Micro Double Bottom hình thành tại dải EMA(20): Đáy 2 không thấp hơn Đáy 1 quá 0.3 * ATR(14).</condition>
+          <condition id="3">Thanh nến tín hiệu (Signal Bar) là nến Bullish Trend Bar đóng cửa ở 20% biên trên của nến kèm RelativeVolume >= 1.6.</condition>
+          <execution_type>BUY STOP đặt tại High(Signal Bar) + 1 Tick.</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>Min(Low(Đáy 1), Low(Đáy 2)) - 0.2 * ATR(14)</stop_loss_formula>
+          <max_risk_per_trade_pct>1.0% tổng số dư tài khoản.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Nến tiếp theo sau khi khớp lệnh đóng cửa là một Bearish Trend Bar ngược hướng hoàn toàn.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="TP1" ratio="2.0R" close_ratio="60%"/>
+          <take_profit_target level="TP2" ratio="3.5R" close_ratio="40%"/>
+          <trailing_stop_rule>Trailing Stop Loss theo đáy của từng thanh Bullish Trend Bar liên tiếp.</trailing_stop_rule>
+          <time_based_stop>Đóng vị thế nếu sau 8 nến giá không bứt phá tạo đỉnh mới.</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Nến breakout giả ngay tại đỉnh cũ rồi quay đầu" diagnosis="Bẫy tăng giá (Bull Trap) tại vùng kháng cự lớn khung HTF" corrective_action="Kiểm tra cự ly đến đỉnh cũ HTF; nếu cự ly < 1.5R thì từ chối vào lệnh."/>
+      </post_mortem_heuristics>
+    </skill>
+
+  </category>
+
+  <!-- ==================================================================== -->
+  <!-- CATEGORY 2: LIQUIDITY SWEEP & SMART MONEY / ORDER FLOW               -->
+  <!-- ==================================================================== -->
+  <category name="Liquidity & Order Flow">
+
+    <!-- SKILL-003: LIQUIDITY SWEEP & STOP RUN REVERSAL -->
+    <skill id="SKILL-003">
+      <metadata>
+        <name>Institutional Liquidity Sweep & Stop-Run Reversal</name>
+        <source_book>Developing High-Frequency Trading Systems, 2nd Edition</source_book>
+        <author>Sebastien Donadio</author>
+        <primary_timeframe>5m / 15m</primary_timeframe>
+        <market_regime>Quét thanh khoản vùng đỉnh/đáy (Liquidity Hunt / Absorption)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Các thuật toán giao dịch tần suất cao (HFT) và tạo lập thị trường thường chủ động đẩy giá quét qua các mốc đỉnh/đáy cục bộ rõ ràng (Equal Highs / Equal Lows) để kích hoạt toàn bộ lệnh Stop Loss của nhà đầu tư nhỏ lẻ. Ngay khi thanh khoản được hấp thụ hết (Order Flow Absorption), giá sẽ giật ngược trở lại biên độ giao dịch thực với tốc độ cực nhanh.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="SwingLow" formula="Lowest(Low, 30)" default_params="lookback=30"/>
+        <indicator name="SwingHigh" formula="Highest(High, 30)" default_params="lookback=30"/>
+        <indicator name="PinbarRatio" formula="(Min(Open, Close) - Low) / (High - Low)" default_params="threshold >= 0.55"/>
+        <indicator name="VolumeSpike" formula="Volume / SMA(Volume, 20)" default_params="threshold >= 2.0"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Nến hiện tại quét qua mức SwingLow(30) với biên độ vượt không quá 0.8 * ATR(14).</condition>
+          <condition id="2">Nến rút chân mạnh: Giá Close đóng cửa hoàn toàn bên trong vùng SwingLow cũ, tỷ lệ râu nến dưới PinbarRatio >= 0.55.</condition>
+          <condition id="3">VolumeSpike >= 2.0x so với trung bình 20 nến gần nhất (hấp thụ cung cực mạnh).</condition>
+          <execution_type>MARKET ngay khi nến quét thanh khoản đóng cửa.</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>Low(Nến Quét) - 0.2 * ATR(14)</stop_loss_formula>
+          <max_risk_per_trade_pct>1.5% tổng số dư tài khoản.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Giá xuyên thủng đáy nến quét thêm 1.0 * ATR -> Thoát toàn bộ lệnh lập tức.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="TP1" ratio="1.8R" close_ratio="50%"/>
+          <take_profit_target level="TP2" ratio="Target là đỉnh đối diện SwingHigh(30)" close_ratio="50%"/>
+          <trailing_stop_rule>Dời Stop Loss về hòa vốn (Breakeven + 0.1% phí) ngay khi giá chạm mốc 1.0R.</trailing_stop_rule>
+          <time_based_stop>Đóng vị thế nếu sau 12 nến không tiếp cận được dải giữa của vùng tích lũy.</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Nến rút chân nhưng các nến sau tiếp tục giảm sâu phá đáy" diagnosis="Đây không phải là quét thanh khoản mà là đợt bán tháo thanh lý cưỡng bức (Liquidation Cascade)" corrective_action="Bổ sung bộ lọc Open Interest (OI) và không bắt đảo chiều nếu funding rate đang âm cực đoan."/>
+      </post_mortem_heuristics>
+    </skill>
+
+    <!-- SKILL-004: FAIR VALUE GAP (FVG) IMBALANCE RETEST -->
+    <skill id="SKILL-004">
+      <metadata>
+        <name>Fair Value Gap (FVG) Imbalance Retest</name>
+        <source_book>Machine Learning for Algorithmic Trading</source_book>
+        <author>Stefan Jansen</author>
+        <primary_timeframe>15m / 1h</primary_timeframe>
+        <market_regime>Động lượng bứt phá kèm mất cân bằng cung cầu (Order Imbalance)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Khi có dòng tiền lớn tham gia đẩy giá mạnh, khoảng trống giá giữa High của Nến 1 và Low của Nến 3 (trong chuỗi 3 nến tăng) tạo ra vùng mất cân bằng thanh khoản (FVG). Thuật toán thị trường có khuynh hướng hồi quy về vùng FVG để khớp các lệnh chờ tồn đọng trước khi tiếp tục xu hướng của tổ chức.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="BullishFVG" formula="Low(nến t) - High(nến t-2) > 0.4 * ATR(14)" default_params="gap_size > 0.4*ATR"/>
+        <indicator name="FVG_Midpoint" formula="[Low(nến t) + High(nến t-2)] / 2" default_params="consequent_encroachment"/>
+        <indicator name="RSI" formula="RSI(Close, 14)" default_params="period=14"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Xuất hiện vùng BullishFVG hợp lệ trên khung 15m với nến thứ 2 là nến mở rộng thân nến lớn.</condition>
+          <condition id="2">Giá thoái lui quay về chạm vào vùng FVG (từ mức High nến t-2 đến FVG_Midpoint).</condition>
+          <condition id="3">RSI(14) tại thời điểm chạm FVG nằm trong khoảng 40 - 55 (không bị quá bán sâu làm vỡ cấu trúc).</condition>
+          <execution_type>LIMIT đặt tại FVG_Midpoint (Consequent Encroachment).</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>High(nến t-2) - 0.3 * ATR(14) (Đáy dưới của khoảng FVG)</stop_loss_formula>
+          <max_risk_per_trade_pct>1.0% tổng số dư tài khoản.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Nến 15m đóng cửa hoàn toàn bên dưới đáy của vùng FVG.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="TP1" ratio="2.0R (Đỉnh của cây nến tạo FVG)" close_ratio="60%"/>
+          <take_profit_target level="TP2" ratio="3.2R" close_ratio="40%"/>
+          <trailing_stop_rule>Khi chạm TP1, dời SL lên trên FVG_Midpoint.</trailing_stop_rule>
+          <time_based_stop>Hủy lệnh Limit nếu sau 16 nến giá không hồi quy về chạm FVG.</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Giá lấp đầy FVG nhưng không phản ứng nến mà xuyên thẳng qua đáy" diagnosis="FVG hình thành trong bối cảnh thiếu thanh khoản chung, không có sự tham gia của tổ chức" corrective_action="Chỉ chấp nhận FVG nếu cây nến trung tâm có Volume >= 2.2x Volume MA20."/>
+      </post_mortem_heuristics>
+    </skill>
+
+  </category>
+
+  <!-- ==================================================================== -->
+  <!-- CATEGORY 3: MEAN REVERSION & STATISTICAL ARBITRAGE                   -->
+  <!-- ==================================================================== -->
+  <category name="Mean Reversion">
+
+    <!-- SKILL-005: BOLLINGER MEAN REVERSION WITH ER FILTER -->
+    <skill id="SKILL-005">
+      <metadata>
+        <name>Bollinger Bands & RSI Overextension Mean Reversion</name>
+        <source_book>Quantitative Trading, 2nd Edition</source_book>
+        <author>Ernie Chan</author>
+        <primary_timeframe>5m / 15m</primary_timeframe>
+        <market_regime>Thị trường đi ngang tích lũy / Dao động trong hộp giá (Kaufman ER < 0.35)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Trong các phiên thị trường thiếu vắng tin tức hoặc trong giai đoạn tích lũy đi ngang (ER thấp), chuỗi giá tài chính tuân theo quy luật dừng Ornstein-Uhlenbeck (Mean-Reverting). Khi giá dãn biên ra ngoài 2 độ lệch chuẩn của dải Bollinger Band kết hợp RSI cực đoan, xác suất hồi quy về giá trị trung bình (Trung trục SMA20) lên đến trên 75%.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="SMA20" formula="SMA(Close, 20)" default_params="period=20"/>
+        <indicator name="UpperBand" formula="SMA20 + 2.0 * StDev(Close, 20)" default_params="multiplier=2.0"/>
+        <indicator name="LowerBand" formula="SMA20 - 2.0 * StDev(Close, 20)" default_params="multiplier=2.0"/>
+        <indicator name="PercentB" formula="(Close - LowerBand) / (UpperBand - LowerBand)" default_params="Range: [0.0, 1.0]"/>
+        <indicator name="RSI" formula="RSI(Close, 14)" default_params="period=14"/>
+        <indicator name="KaufmanER" formula="EfficiencyRatio(10)" default_params="threshold < 0.35"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Bộ lọc trạng thái thị trường: Kaufman ER(10) < 0.35 (BẮT BUỘC để tránh bắt đỉnh/đáy trong pha Trend mạnh).</condition>
+          <condition id="2">Điều kiện quá bán: Giá đóng cửa dưới dải LowerBand (PercentB < 0.0) VÀ RSI(14) < 28.</condition>
+          <condition id="3">Tín hiệu kích hoạt: Xuất hiện nến đảo chiều đóng cửa quay trở lại bên trong dải LowerBand (PercentB > 0.05).</condition>
+          <execution_type>MARKET ngay khi nến xác nhận đóng cửa.</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>Lowest(Low, 5) - 0.5 * ATR(14)</stop_loss_formula>
+          <max_risk_per_trade_pct>1.0% tổng số dư tài khoản.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Giá tiếp tục giảm thủng LowerBand quá 1.5 * ATR(14) hoặc mức lỗ ROI vượt quá -15% vốn ký quỹ -> Cắt bỏ ngay lập tức.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="TP1" ratio="Chạm trung trục SMA(20)" close_ratio="70%"/>
+          <take_profit_target level="TP2" ratio="Chạm dải đối diện UpperBand" close_ratio="30%"/>
+          <trailing_stop_rule>Dời Stop Loss về hòa vốn khi giá chạm 50% quãng đường đến đường SMA(20).</trailing_stop_rule>
+          <time_based_stop>Đóng vị thế sau tối đa 10 nến nếu giá chưa chạm được SMA(20).</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Vào lệnh bắt đáy nhưng giá bám dải dưới (Band Walking) và giảm sâu liên tục" diagnosis="Thị trường đã bùng nổ Breakout chuyển sang pha xu hướng giảm mạnh mà ER bị trễ chưa nhận diện kịp" corrective_action="Kiểm tra thêm độ rộng dải Bollinger Bandwidth; nếu Bandwidth đang dãn rộng đột biến > 2.0x thì cấm tuyệt đối lệnh Mean Reversion."/>
+      </post_mortem_heuristics>
+    </skill>
+
+  </category>
+
+  <!-- ==================================================================== -->
+  <!-- CATEGORY 4: ADVANCED QUANTITATIVE & MACHINE LEARNING FILTERS         -->
+  <!-- ==================================================================== -->
+  <category name="Machine Learning & Risk Management">
+
+    <!-- SKILL-006: DE PRADO'S TRIPLE BARRIER METHOD & VOLATILITY POSITION SIZING -->
+    <skill id="SKILL-006">
+      <metadata>
+        <name>Triple Barrier Method & Volatility-Adjusted Dynamic Sizing</name>
+        <source_book>Advances in Financial Machine Learning</source_book>
+        <author>Marcos López de Prado</author>
+        <primary_timeframe>Mọi khung thời gian (Dynamic Meta-Framework)</primary_timeframe>
+        <market_regime>Quản trị rủi ro đa chế độ (Multi-Regime Execution Framework)</market_regime>
+      </metadata>
+
+      <core_hypothesis>
+        Giao dịch tài chính không thể dựa trên các mốc chốt lời/cắt lỗ cố định theo điểm (fixed pips/dollars) do biến động thị trường (volatility) thay đổi liên tục theo thời gian. Bằng cách thiết lập 3 rào chắn động (Upper Horizontal Barrier, Lower Horizontal Barrier, Vertical Time Barrier) dựa trên độ biến động thực tế (Daily/Hourly Volatility Estimate), hệ thống chuẩn hóa được phân phối lợi nhuận và hạn chế tối đa rủi ro suy thoái vốn cục bộ.
+      </core_hypothesis>
+
+      <mathematical_indicators>
+        <indicator name="EWM_Volatility" formula="Sqrt(EWM(Return^2, span=100))" default_params="span=100"/>
+        <indicator name="UpperBarrier" formula="EntryPrice * (1 + target_multiplier * EWM_Volatility)" default_params="target_multiplier=2.0"/>
+        <indicator name="LowerBarrier" formula="EntryPrice * (1 - stop_multiplier * EWM_Volatility)" default_params="stop_multiplier=1.2"/>
+        <indicator name="VerticalBarrier" formula="CurrentTimestamp + max_holding_bars * BarDuration" default_params="max_bars=24"/>
+        <indicator name="PositionSizeCoins" formula="(AccountEquity * RiskFraction) / (EntryPrice - LowerBarrier)" default_params="RiskFraction=0.01"/>
+      </mathematical_indicators>
+
+      <rules>
+        <entry_setup>
+          <condition id="1">Tín hiệu kỹ thuật từ một trong các chiến lược (KAMA, Liquidity Sweep, FVG) được xác nhận.</condition>
+          <condition id="2">Độ biến động EWM_Volatility nằm trong khoảng cho phép [0.003, 0.045] (không giao dịch khi thị trường đóng băng hoặc biến động phi tuyến tính cực đoan).</condition>
+          <condition id="3">Quy mô vị thế được tính toán động sao cho khoảng cách từ Entry đến LowerBarrier chỉ gây thiệt hại chính xác 1.0% tổng tài sản tài khoản.</condition>
+          <execution_type>MARKET với số lượng coin được làm tròn theo StepSize của sàn.</execution_type>
+        </entry_setup>
+
+        <risk_management>
+          <stop_loss_formula>LowerBarrier = EntryPrice * (1 - 1.2 * EWM_Volatility)</stop_loss_formula>
+          <max_risk_per_trade_pct>1.0% tổng Equity của danh mục.</max_risk_per_trade_pct>
+          <circuit_breaker_condition>Tài khoản sụt giảm tổng vốn ngày (Daily Drawdown) vượt quá 4.0% -> Khóa toàn bộ quyền mở lệnh mới của bot trong 24 giờ.</circuit_breaker_condition>
+        </risk_management>
+
+        <exit_strategy>
+          <take_profit_target level="UpperBarrier" ratio="2.0 * EWM_Volatility" close_ratio="100%"/>
+          <trailing_stop_rule>Nâng LowerBarrier lên mức Entry khi giá đã đi được 50% khoảng cách đến UpperBarrier.</trailing_stop_rule>
+          <time_based_stop>Khi chạm VerticalBarrier (hết 24 nến mà chưa chạm Upper hoặc Lower Barrier) -> Đóng toàn bộ vị thế tại giá thị trường để giải phóng vốn ký quỹ.</time_based_stop>
+        </exit_strategy>
+      </rules>
+
+      <post_mortem_heuristics>
+        <failure_pattern id="F1" symptom="Vị thế liên tục bị đóng tại VerticalBarrier với PnL quanh mức 0" diagnosis="Chiến lược đang vào lệnh trong điều kiện thị trường cạn kiệt thanh khoản và động lượng" corrective_action="Tăng hệ số lọc biến động tối thiểu EWM_Volatility trước khi cho phép mở lệnh."/>
+      </post_mortem_heuristics>
+    </skill>
+
+  </category>
+
+</trading_knowledge_base>

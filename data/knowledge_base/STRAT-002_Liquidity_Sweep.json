@@ -1,0 +1,70 @@
+﻿{
+  "id": "STRAT-002",
+  "name": "Institutional Liquidity Sweep & Stop-Run Reversal",
+  "category": "Liquidity & Order Flow",
+  "metadata": {
+    "source_book": "Developing High-Frequency Trading Systems, 2nd Edition",
+    "author": "Sebastien Donadio",
+    "primary_timeframe": "5m / 15m",
+    "market_regime": "Quét thanh khoản vùng đỉnh/đáy (Liquidity Hunt / Absorption)"
+  },
+  "core_hypothesis": "Các thuật toán giao dịch tần suất cao (HFT) và tạo lập thị trường thường chủ động đẩy giá quét qua các mốc đỉnh/đáy cục bộ rõ ràng (Equal Highs / Equal Lows) để kích hoạt toàn bộ lệnh Stop Loss của nhà đầu tư nhỏ lẻ. Ngay khi thanh khoản được hấp thụ hết (Order Flow Absorption), giá sẽ giật ngược trở lại biên độ giao dịch thực với tốc độ cực nhanh.",
+  "mathematical_indicators": [
+    {
+      "name": "SwingLow",
+      "formula": "Lowest(Low, 30)",
+      "default_params": "lookback=30"
+    },
+    {
+      "name": "SwingHigh",
+      "formula": "Highest(High, 30)",
+      "default_params": "lookback=30"
+    },
+    {
+      "name": "PinbarRatio",
+      "formula": "(Min(Open, Close) - Low) / (High - Low)",
+      "default_params": "threshold >= 0.55"
+    },
+    {
+      "name": "VolumeSpike",
+      "formula": "Volume / SMA(Volume, 20)",
+      "default_params": "threshold >= 2.0"
+    },
+    {
+      "name": "ATR",
+      "formula": "EMA(TrueRange, 14)",
+      "default_params": "period=14"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Nến hiện tại quét qua mức SwingLow(30) với biên độ vượt không quá 0.8 * ATR(14).",
+        "Nến rút chân mạnh: Giá Close đóng cửa hoàn toàn bên trong vùng SwingLow cũ, tỷ lệ râu nến dưới PinbarRatio >= 0.55.",
+        "VolumeSpike >= 2.0x so với trung bình 20 nến gần nhất (hấp thụ cung cực mạnh)."
+      ],
+      "execution_type": "MARKET ngay khi nến quét thanh khoản đóng cửa."
+    },
+    "risk_management": {
+      "stop_loss_formula": "Low(Nến Quét) - 0.2 * ATR(14)",
+      "max_risk_per_trade_pct": 1.5,
+      "circuit_breaker_condition": "Giá xuyên thủng đáy nến quét thêm 1.0 * ATR -> Thoát toàn bộ lệnh lập tức."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "TP1", "ratio": "1.8R", "close_ratio": "50%" },
+        { "level": "TP2", "ratio": "Target là đỉnh đối diện SwingHigh(30)", "close_ratio": "50%" }
+      ],
+      "trailing_stop_rule": "Dời Stop Loss về hòa vốn (Breakeven + 0.1% phí) ngay khi giá chạm mốc 1.0R.",
+      "time_based_stop": "Đóng vị thế nếu sau 12 nến không tiếp cận được dải giữa của vùng tích lũy."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Nến rút chân nhưng các nến sau tiếp tục giảm sâu phá đáy",
+      "diagnosis": "Đây không phải là quét thanh khoản mà là đợt bán tháo thanh lý cưỡng bức (Liquidation Cascade)",
+      "corrective_action": "Bổ sung bộ lọc Open Interest (OI) và không bắt đảo chiều nếu funding rate đang âm cực đoan."
+    }
+  ]
+}

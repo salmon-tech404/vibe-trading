@@ -1,0 +1,65 @@
+﻿{
+  "id": "STRAT-003",
+  "name": "Fair Value Gap (FVG) Imbalance Retest",
+  "category": "Liquidity & Order Flow",
+  "metadata": {
+    "source_book": "Machine Learning for Algorithmic Trading",
+    "author": "Stefan Jansen",
+    "primary_timeframe": "15m / 1h",
+    "market_regime": "Động lượng bứt phá kèm mất cân bằng cung cầu (Order Imbalance)"
+  },
+  "core_hypothesis": "Khi có dòng tiền lớn tham gia đẩy giá mạnh, khoảng trống giá giữa High của Nến 1 và Low của Nến 3 (trong chuỗi 3 nến tăng) tạo ra vùng mất cân bằng thanh khoản (FVG). Thuật toán thị trường có khuynh hướng hồi quy về vùng FVG để khớp các lệnh chờ tồn đọng trước khi tiếp tục xu hướng của tổ chức.",
+  "mathematical_indicators": [
+    {
+      "name": "BullishFVG",
+      "formula": "Low(nến t) - High(nến t-2) > 0.4 * ATR(14)",
+      "default_params": "gap_size > 0.4*ATR"
+    },
+    {
+      "name": "FVG_Midpoint",
+      "formula": "[Low(nến t) + High(nến t-2)] / 2",
+      "default_params": "consequent_encroachment"
+    },
+    {
+      "name": "RSI",
+      "formula": "RSI(Close, 14)",
+      "default_params": "period=14"
+    },
+    {
+      "name": "ATR",
+      "formula": "EMA(TrueRange, 14)",
+      "default_params": "period=14"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Xuất hiện vùng BullishFVG hợp lệ trên khung 15m với nến thứ 2 là nến mở rộng thân nến lớn.",
+        "Giá thoái lui quay về chạm vào vùng FVG (từ mức High nến t-2 đến FVG_Midpoint).",
+        "RSI(14) tại thời điểm chạm FVG nằm trong khoảng 40 - 55 (không bị quá bán sâu làm vỡ cấu trúc)."
+      ],
+      "execution_type": "LIMIT đặt tại FVG_Midpoint (Consequent Encroachment)."
+    },
+    "risk_management": {
+      "stop_loss_formula": "High(nến t-2) - 0.3 * ATR(14) (Đáy dưới của khoảng FVG)",
+      "max_risk_per_trade_pct": 1.0,
+      "circuit_breaker_condition": "Nến 15m đóng cửa hoàn toàn bên dưới đáy của vùng FVG."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "TP1", "ratio": "2.0R (Đỉnh của cây nến tạo FVG)", "close_ratio": "60%" },
+        { "level": "TP2", "ratio": "3.2R", "close_ratio": "40%" }
+      ],
+      "trailing_stop_rule": "Khi chạm TP1, dời SL lên trên FVG_Midpoint.",
+      "time_based_stop": "Hủy lệnh Limit nếu sau 16 nến giá không hồi quy về chạm FVG."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Giá lấp đầy FVG nhưng không phản ứng nến mà xuyên thẳng qua đáy",
+      "diagnosis": "FVG hình thành trong bối cảnh thiếu thanh khoản chung, không có sự tham gia của tổ chức",
+      "corrective_action": "Chỉ chấp nhận FVG nếu cây nến trung tâm có Volume >= 2.2x Volume MA20."
+    }
+  ]
+}

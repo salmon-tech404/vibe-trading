@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ Thống Ôn Thi Quản Lý Dự Án Phần Mềm - 150 Câu Hỏi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ========== THEME PALETTES ========== */
+    :root {
+      /* Dark Theme (Default) */
+      --bg-main: #090a0c;
+      --bg-surface: #121316;
+      --bg-surface-elevated: #181a1f;
+      --bg-surface-hover: #20232a;
+      
+      --border-subtle: #23262d;
+      --border-medium: #323640;
+      --border-focus: #70b4ff;
+      
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-tertiary: #6b7280;
+      --text-brand: #8ecbff;
+      
+      --brand-primary: #70b4ff;
+      --brand-glow: rgba(112, 180, 255, 0.12);
+      --brand-border: rgba(112, 180, 255, 0.35);
+      
+      --color-success: #34d399;
+      --color-success-bg: rgba(52, 211, 153, 0.1);
+      --color-success-border: rgba(52, 211, 153, 0.35);
+      
+      --color-danger: #f87171;
+      --color-danger-bg: rgba(248, 113, 113, 0.1);
+      --color-danger-border: rgba(248, 113, 113, 0.35);
+
+      --code-bg: #090a0c;
+      --code-color: #93c5fd;
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+      --modal-overlay-bg: rgba(0, 0, 0, 0.75);
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    [data-theme="light"] {
+      /* Light Theme */
+      --bg-main: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      
+      --border-subtle: #e2e8f0;
+      --border-medium: #cbd5e1;
+      --border-focus: #3b82f6;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #94a3b8;
+      --text-brand: #0284c7;
+      
+      --brand-primary: #0284c7;
+      --brand-glow: rgba(2, 132, 199, 0.08);
+      --brand-border: rgba(2, 132, 199, 0.28);
+      
+      --color-success: #059669;
+      --color-success-bg: rgba(16, 185, 129, 0.08);
+      --color-success-border: rgba(16, 185, 129, 0.3);
+      
+      --color-danger: #dc2626;
+      --color-danger-bg: rgba(239, 68, 68, 0.08);
+      --color-danger-border: rgba(239, 68, 68, 0.25);
+
+      --code-bg: #f1f5f9;
+      --code-color: #0369a1;
+      --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
+      --modal-overlay-bg: rgba(15, 23, 42, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.22s ease, color 0.22s ease;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Widescreen 100vh Container: 1160px for 150 questions */
+    .app-container {
+      max-width: 1160px;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-brand);
+      font-family: var(--font-mono);
+      background: var(--brand-glow);
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--brand-border);
+    }
+
+    .header-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-brand {
+      background: var(--brand-glow);
+      color: var(--text-brand);
+      border-color: var(--brand-border);
+    }
+
+    .btn-brand:hover {
+      background: rgba(112, 180, 255, 0.22);
+      border-color: var(--brand-primary);
+      color: var(--text-brand);
+    }
+
+    [data-theme="light"] .btn-brand:hover {
+      background: rgba(2, 132, 199, 0.15);
+      border-color: var(--brand-primary);
+    }
+
+    /* Main Grid Layout */
+    .main-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    /* Left Sidebar: Score + 150 Question Palette */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    /* Stats Card */
+    .stats-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow-card);
+      flex-shrink: 0;
+    }
+
+    .stats-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .stat-items-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-icon {
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+    }
+
+    .stat-label {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .stat-value-sub {
+      color: var(--text-tertiary);
+      font-weight: 400;
+      font-size: 11px;
+    }
+
+    .percentage-badge {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-brand);
+      background: var(--brand-glow);
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid var(--brand-border);
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      background: var(--bg-surface-elevated);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #8ecbff);
+      border-radius: 99px;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] .progress-fill {
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+    }
+
+    /* Palette Box for 150 questions */
+    .palette-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow-card);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .palette-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .palette-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .palette-filters {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-chip {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-tertiary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--border-medium);
+      color: var(--text-secondary);
+    }
+
+    .filter-chip.active {
+      background: var(--bg-surface-elevated);
+      border-color: var(--brand-border);
+      color: var(--text-brand);
+      font-weight: 600;
+    }
+
+    /* 6-Column Grid for 150 Questions */
+    .chips-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      overflow-y: auto;
+      padding-right: 4px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .chips-grid::-webkit-scrollbar {
+      width: 4px;
+    }
+    .chips-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chips-grid::-webkit-scrollbar-thumb {
+      background: var(--border-medium);
+      border-radius: 4px;
+    }
+
+    .q-chip {
+      height: 29px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .q-chip:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+    }
+
+    .q-chip.active {
+      border-color: var(--brand-primary) !important;
+      color: var(--text-primary) !important;
+      background: var(--brand-glow) !important;
+      font-weight: 700;
+      box-shadow: 0 0 0 1px var(--brand-primary);
+    }
+
+    .q-chip.correct {
+      border-color: var(--color-success-border);
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+
+    .q-chip.wrong {
+      border-color: var(--color-danger-border);
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+    }
+
+    /* Right Main Content Panel: Question & Workspace */
+    .workspace-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .q-index-pill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-brand);
+      background: var(--brand-glow);
+      padding: 3px 9px;
+      border-radius: 5px;
+      border: 1px solid var(--brand-border);
+      font-weight: 600;
+    }
+
+    .q-reset-btn {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 11.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .q-reset-btn:hover {
+      color: var(--text-secondary);
+    }
+
+    /* Scrollable Question, Options & Explanation Area */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 6px;
+      min-height: 0;
+    }
+
+    .scroll-content::-webkit-scrollbar {
+      width: 5px;
+    }
+    .scroll-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scroll-content::-webkit-scrollbar-thumb {
+      background: var(--border-medium);
+      border-radius: 4px;
+    }
+
+    .question-content {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      font-family: var(--font-sans);
+    }
+
+    /* Options List */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-family: inherit;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--border-medium);
+      background: var(--bg-surface-hover);
+      transform: translateX(2px);
+    }
+
+    .option-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .option-text {
+      flex: 1;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+    }
+
+    .option-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Option States */
+    .option-btn.state-correct {
+      background: var(--color-success-bg) !important;
+      border-color: var(--color-success-border) !important;
+      color: var(--color-success);
+      font-weight: 500;
+    }
+    .option-btn.state-correct .option-letter {
+      background: var(--color-success);
+      color: #fff;
+      border-color: var(--color-success);
+    }
+
+    .option-btn.state-wrong {
+      background: var(--color-danger-bg) !important;
+      border-color: var(--color-danger-border) !important;
+      color: var(--color-danger);
+    }
+    .option-btn.state-wrong .option-letter {
+      background: var(--color-danger);
+      color: #fff;
+      border-color: var(--color-danger);
+    }
+
+    .option-btn.state-dim {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    /* Explanation Box */
+    .explanation-panel {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-banner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      width: fit-content;
+    }
+
+    .status-banner.is-correct {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid var(--color-success-border);
+    }
+
+    .status-banner.is-wrong {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger-border);
+    }
+
+    .explain-block {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 11px 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .explain-icon {
+      color: var(--text-brand);
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+    }
+
+    .explain-icon.tip-icon {
+      color: #f59e0b;
+    }
+
+    .explain-icon.diff-icon {
+      color: #8b5cf6;
+    }
+
+    .explain-text-wrap {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .explain-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      font-size: 12.5px;
+    }
+
+    .explain-text-wrap code {
+      font-family: var(--font-mono);
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--code-color);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Fixed Bottom Footer inside Workspace */
+    .workspace-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .shortcuts-hint {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kbd {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-secondary);
+    }
+
+    /* Modal dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--modal-overlay-bg);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      max-width: 420px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Responsive for Tablet / Mobile */
+    @media (max-width: 820px) {
+      html, body {
+        overflow-y: auto;
+        height: auto;
+      }
+      .app-container {
+        height: auto;
+        padding: 12px;
+      }
+      .main-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .sidebar-panel {
+        height: auto;
+      }
+      .chips-grid {
+        max-height: 150px;
+        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+      }
+      .workspace-panel {
+        height: auto;
+      }
+      .scroll-content {
+        overflow-y: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="header-info">
+        <div class="badge-tag">
+          <i data-lucide="sparkles" style="width:13px; height:13px;"></i>
+          Quản Lý Dự Án
+        </div>
+        <h1 class="header-title">Ôn Tập Quản Lý Phần Mềm (150 Câu)</h1>
+      </div>
+      <div class="header-actions">
+        <!-- Theme Toggle Button -->
+        <button id="btn-theme-toggle" class="btn" title="Chuyển đổi giao diện Sáng / Tối">
+          <i id="theme-icon" data-lucide="sun" style="width:13px; height:13px;"></i>
+          <span id="theme-text">Sáng</span>
+        </button>
+
+        <button id="btn-shuffle" class="btn" title="Xáo trộn vị trí các đáp án A/B/C/D">
+          <i data-lucide="shuffle" style="width:13px; height:13px;"></i>
+          <span>Xáo đáp án</span>
+        </button>
+        <button id="btn-reset-all" class="btn" title="Làm lại toàn bộ 150 câu">
+          <i data-lucide="rotate-ccw" style="width:13px; height:13px;"></i>
+          <span>Làm lại</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main 2-Column Dashboard Layout (100vh) -->
+    <div class="main-layout">
+      <!-- Left Column: Score + 150 Questions Palette -->
+      <aside class="sidebar-panel">
+        <!-- Stats Card -->
+        <div class="stats-card">
+          <div class="stats-grid">
+            <div class="stat-items-group">
+              <div class="stat-item">
+                <div class="stat-icon"><i data-lucide="trophy" style="width:15px; height:15px;"></i></div>
+                <div>
+                  <div class="stat-label">Điểm số</div>
+                  <div class="stat-value"><span id="val-correct">0</span> <span class="stat-value-sub">/ 150</span></div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon"><i data-lucide="target" style="width:15px; height:15px;"></i></div>
+                <div>
+                  <div class="stat-label">Đã làm</div>
+                  <div class="stat-value"><span id="val-answered">0</span> <span class="stat-value-sub">/ 150</span></div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon" style="color: var(--color-danger);"><i data-lucide="x-circle" style="width:15px; height:15px;"></i></div>
+                <div>
+                  <div class="stat-label">Sai</div>
+                  <div class="stat-value"><span id="val-wrong">0</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="percentage-badge" id="val-percentage">0%</div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Question Palette Grid (6 Columns for 150 questions) -->
+        <div class="palette-box">
+          <div class="palette-header">
+            <div class="palette-title">
+              <i data-lucide="layout-grid" style="width:14px; height:14px; color: var(--text-brand);"></i>
+              <span>Bảng câu hỏi (1 - 150)</span>
+            </div>
+            <div class="palette-filters">
+              <button class="filter-chip active" data-filter="all">Tất cả</button>
+              <button class="filter-chip" data-filter="unanswered">Chưa làm</button>
+              <button class="filter-chip" data-filter="correct">Đúng</button>
+              <button class="filter-chip" data-filter="wrong">Sai</button>
+            </div>
+          </div>
+          <div class="chips-grid" id="chips-container">
+            <!-- Question chips injected by JS -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Question Content, Options, Explanation & Bottom Navigation -->
+      <main class="workspace-panel">
+        <div class="card-meta">
+          <div class="q-index-pill" id="q-index-text">Câu 1 / 150</div>
+          <button class="q-reset-btn" id="btn-reset-current" title="Làm lại câu này">
+            <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i>
+            <span>Làm lại câu này</span>
+          </button>
+        </div>
+
+        <!-- Scrollable Middle Section -->
+        <div class="scroll-content">
+          <div class="question-content" id="q-text">Đang tải nội dung câu hỏi...</div>
+
+          <div class="options-list" id="options-container">
+            <!-- Options injected by JS -->
+          </div>
+
+          <!-- Explanation Panel -->
+          <div class="explanation-panel" id="explanation-container" style="display: none;">
+            <div id="status-banner" class="status-banner">
+              <!-- Status icon + text -->
+            </div>
+
+            <div class="explain-block">
+              <div class="explain-icon">
+                <i data-lucide="book-open" style="width:15px; height:15px;"></i>
+              </div>
+              <div class="explain-text-wrap">
+                <div class="explain-title">Giải thích kỹ thuật (Dễ hiểu cho người mới học)</div>
+                <div id="explain-tech-text"></div>
+              </div>
+            </div>
+
+            <div class="explain-block" id="block-tip">
+              <div class="explain-icon tip-icon">
+                <i data-lucide="lightbulb" style="width:15px; height:15px;"></i>
+              </div>
+              <div class="explain-text-wrap">
+                <div class="explain-title">Mẹo nhớ nhanh khi đi thi</div>
+                <div id="explain-tip-text"></div>
+              </div>
+            </div>
+
+            <div class="explain-block" id="block-distinguish">
+              <div class="explain-icon diff-icon">
+                <i data-lucide="split" style="width:15px; height:15px;"></i>
+              </div>
+              <div class="explain-text-wrap">
+                <div class="explain-title">Phân biệt & Bẫy cần tránh</div>
+                <div id="explain-distinguish-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fixed Footer inside Workspace -->
+        <footer class="workspace-footer">
+          <div class="shortcuts-hint">
+            <span>Phím: <span class="kbd">A</span> <span class="kbd">B</span> <span class="kbd">C</span> <span class="kbd">D</span></span>
+            <span>•</span>
+            <span><span class="kbd">←</span> <span class="kbd">→</span></span>
+            <span>•</span>
+            <span><span class="kbd">R</span> Làm lại</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn nav-btn" id="btn-prev">
+              <i data-lucide="chevron-left" style="width:15px; height:15px;"></i>
+              <span>Câu trước</span>
+            </button>
+            <button class="btn nav-btn btn-brand" id="btn-next">
+              <span>Câu tiếp theo</span>
+              <i data-lucide="chevron-right" style="width:15px; height:15px;"></i>
+            </button>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Confirm Reset All -->
+  <div class="modal-overlay" id="reset-modal">
+    <div class="modal-box">
+      <h3 class="modal-title">Làm lại từ đầu?</h3>
+      <p class="modal-desc">Toàn bộ tiến độ và kết quả làm bài của 150 câu hỏi sẽ được thiết lập lại từ đầu.</p>
+      <div class="modal-actions">
+        <button class="btn" id="btn-modal-cancel">Hủy</button>
+        <button class="btn btn-brand" id="btn-modal-confirm">Xác nhận làm lại</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 150 QUESTIONS DATA ---
+    const RAW_QUESTIONS = [{"id":1,"question":"Ai chịu trách nhiệm quản lý tích hợp dự án?","correct":"Người quản lý dự án.","wrongs":["Quản lý cấp cao.","Đội dự án.","Nhà tài trợ hoặc khách hàng."],"explanation":"<strong>Bản chất:</strong> Người quản lý dự án (Project Manager - PM) là 'nhạc trưởng' điều phối toàn bộ các mảng (phạm vi, thời gian, chi phí, chất lượng, nhân sự, rủi ro) để gắn kết thành một thể thống nhất.<br><strong>Chi tiết kỹ thuật:</strong> Quản lý tích hợp (Project Integration Management) là trách nhiệm độc quyền của người quản lý dự án, không thể ủy quyền hoàn toàn cho bên khác.","tip":"Từ khóa nhận diện: \"Người quản lý dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":2,"question":"Trong các bên có liên quan đến dự án phần mềm, bên nào có vai trò quan trọng nhất quyết định sự thành công của dự án?","correct":"Người quản lý dự án.","wrongs":["Nhà tài trợ.","Quản lý cấp cao.","Khách hàng."],"explanation":"<strong>Bản chất:</strong> Người quản lý dự án (Project Manager - PM) là 'nhạc trưởng' điều phối toàn bộ các mảng (phạm vi, thời gian, chi phí, chất lượng, nhân sự, rủi ro) để gắn kết thành một thể thống nhất.<br><strong>Chi tiết kỹ thuật:</strong> Quản lý tích hợp (Project Integration Management) là trách nhiệm độc quyền của người quản lý dự án, không thể ủy quyền hoàn toàn cho bên khác.","tip":"Từ khóa nhận diện: \"Người quản lý dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":3,"question":"Dự án phần mềm là:","correct":"Nỗ lực tạm thời để tạo ra một sản phẩm phần mềm.","wrongs":["D Tất cả các ý khác đều đúng","Nỗ lực tạm thời để tạo ra một sản phẩm hữu hình.","Nỗ lực liên tục để tạo ra một sản phẩm phần mềm."],"explanation":"<strong>Bản chất:</strong> Dự án có 2 đặc tính cốt lõi: <em>Tạm thời</em> (có thời điểm bắt đầu và kết thúc rõ ràng) và <em>Duy nhất</em> (tạo ra sản phẩm/dịch vụ mới chưa từng có trước đó).<br><strong>Chi tiết kỹ thuật:</strong> Dự án phần mềm khác với công việc vận hành thường nhật (Operations) ở chỗ nó không lặp đi lặp lại vô tận mà là một nỗ lực hữu hạn về mặt thời gian.","tip":"Từ khóa nhận diện: \"Nỗ lực tạm thời để tạo ra một sản phẩm phần mềm.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":4,"question":"Một chuỗi các công việc nhằm tạo ra một sản phẩm hay dịch vụ duy nhất trong một thời hạn nào đó được mô tả đúng bởi thuật ngữ nào?","correct":"Một dự án.","wrongs":["Một nhiệm vụ.","Một đơn vị công việc","Một chương trình."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Một dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Một chuỗi các công việc; sản phẩm hay dịch vụ duy nhất\".","tip":"Từ khóa nhận diện: \"Một dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":5,"question":"Mục đích của lập kế hoạch dự án phần mềm là:","correct":"Xác định kích thước, thời gian và chi phí thực hiện dự án.","wrongs":["Phát hiện kỹ thuật gì sẽ được dùng để đạt được hiệu quả cao nhất.","Xác định chi phí dự án.","Xác định ai sẽ là khách hàng hay nhà tài trợ dự án."],"explanation":"<strong>Bản chất:</strong> Dự án có 2 đặc tính cốt lõi: <em>Tạm thời</em> (có thời điểm bắt đầu và kết thúc rõ ràng) và <em>Duy nhất</em> (tạo ra sản phẩm/dịch vụ mới chưa từng có trước đó).<br><strong>Chi tiết kỹ thuật:</strong> Dự án phần mềm khác với công việc vận hành thường nhật (Operations) ở chỗ nó không lặp đi lặp lại vô tận mà là một nỗ lực hữu hạn về mặt thời gian.","tip":"Từ khóa nhận diện: \"Xác định kích thước, thời gian và chi phí thực hiện dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":6,"question":"Hoạt động nào sau đây không phải là một hoạt động đặc thù của người quản lý dự án?","correct":"Kiểm soát công việc dự án.","wrongs":["Lập các kế hoạch cho dự án.","Theo dõi và giám sát tiến độ dự án.","Lập kế hoạch tiến độ cho dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Kiểm soát công việc dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; người quản lý dự án\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; người quản lý dự án\" trước khi chọn \"Kiểm soát công việc dự án.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Khái niệm và đặc trưng dự án\"; chọn phương án lệch nhóm \"Kiểm soát công việc dự án.\"."},{"id":7,"question":"Trong cấu trúc của tổ chức nào sau đây, người quản lý dự án có quyền lực cao nhất?","correct":"Tổ chức theo dự án.","wrongs":["Tổ chức theo phân cấp.","Tổ chức ma trận.","Tổ chức theo chức năng."],"explanation":"<strong>Bản chất:</strong> Trong mô hình tổ chức thuần dự án (Projectized Organization), PM nắm toàn quyền quyết định về nhân sự và ngân sách.<br><strong>Chi tiết kỹ thuật:</strong> So sánh quyền lực PM: <em>Projectized (Cao nhất)</em> > <em>Strong Matrix</em> > <em>Balanced Matrix</em> > <em>Weak Matrix</em> > <em>Functional (Thấp nhất - Giám đốc chức năng nắm quyền)</em>.","tip":"Từ khóa nhận diện: \"Tổ chức theo dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":8,"question":"Chọn phát biểu đúng về dự án","correct":"Dự án là một nỗ lực tạm thời được tiến hành để tạo ra một sản phẩm hoặc dịch vụ duy nhất.","wrongs":["Dự án là một nỗ lực duy nhất để tạo ra một dịch vụ tạm thời.","Dự án là một sản phẩm tạm thời được tiến hành để tạo ra một nỗ lực hoặc dịch vụ duy nhất.","Dự án là một dịch vụ duy nhất được tiến hành để tạo ra một sản phẩm tạm thời."],"explanation":"<strong>Bản chất:</strong> Dự án có 2 đặc tính cốt lõi: <em>Tạm thời</em> (có thời điểm bắt đầu và kết thúc rõ ràng) và <em>Duy nhất</em> (tạo ra sản phẩm/dịch vụ mới chưa từng có trước đó).<br><strong>Chi tiết kỹ thuật:</strong> Dự án phần mềm khác với công việc vận hành thường nhật (Operations) ở chỗ nó không lặp đi lặp lại vô tận mà là một nỗ lực hữu hạn về mặt thời gian.","tip":"Từ khóa nhận diện: \"Dự án là một nỗ lực tạm thời được tiến hành để tạo ra một sản phẩm hoặc dịch vụ duy nhất.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":9,"question":"Yếu tố nào sau đây không phải là một trong các ràng buộc của quản lý dự án?","correct":"Con người.","wrongs":["Chi phí.","Thời gian.","Phạm vi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Con người.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; ràng buộc của quản lý dự án\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; ràng buộc của quản lý dự án\" trước khi chọn \"Con người.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Khái niệm và đặc trưng dự án\"; chọn phương án lệch nhóm \"Con người.\"."},{"id":10,"question":"Yếu tố nào sau đây là yếu tố quyết định sự thành công của dự án?","correct":"Con người.","wrongs":["Quy trình.","Sản phẩm.","Kỹ thuật."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Con người.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"quyết định sự thành công; dự án\".","tip":"Từ khóa nhận diện: \"Con người.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":11,"question":"Quản lý dự án là:","correct":"Khả năng quản lý và nổ lực tạm thời để tạo ra một sản phẩm hay dịch vụ duy nhất với khoảng thời gian và ngân sách nhất định.","wrongs":["Khả năng quản lý một chuỗi công việc theo thứ tự thời gian với khoảng thời gian và ngân sách nhất định.","Khả năng hoàn thành một công việc trong khoảng thời gian nhất định.","Khả năng hoàn thành một công việc với khoản ngân sách nhất định."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Khả năng quản lý và nổ lực tạm thời để tạo ra một sản phẩm hay dịch vụ duy nhất với khoảng thời gian và ngân sách nhất định.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Quản lý dự án\".","tip":"Từ khóa nhận diện: \"Khả năng quản lý và nổ lực tạm thời để tạo ra một sản phẩm hay dịch vụ duy nhất với khoảng thời gian và ngân sách nhất định.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":12,"question":"Quản lý dự án phần mềm là:","correct":"Khả năng quản lý và nổ lực tạm thời để tạo ra một phần mềm duy nhất với khoảng thời gian và ngân sách nhất định.","wrongs":["Khả năng hoàn thành một phần mềm với khoản ngân sách nhất định.","Khả năng quản lý một chuỗi công việc theo thứ tự thời gian với khoảng thời gian và ngân sách nhất định.","Khả năng hoàn thành một phần mềm trong khoảng thời gian nhất định."],"explanation":"<strong>Bản chất:</strong> Dự án có 2 đặc tính cốt lõi: <em>Tạm thời</em> (có thời điểm bắt đầu và kết thúc rõ ràng) và <em>Duy nhất</em> (tạo ra sản phẩm/dịch vụ mới chưa từng có trước đó).<br><strong>Chi tiết kỹ thuật:</strong> Dự án phần mềm khác với công việc vận hành thường nhật (Operations) ở chỗ nó không lặp đi lặp lại vô tận mà là một nỗ lực hữu hạn về mặt thời gian.","tip":"Từ khóa nhận diện: \"Khả năng quản lý và nổ lực tạm thời để tạo ra một phần mềm duy nhất với khoảng thời gian và ngân sách nhất định.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":13,"question":"Giải pháp tốt nhất để ngăn ngừa sự thay đổi kế hoạch dự án là:","correct":"Lập kế hoạch chính xác.","wrongs":["Sử dụng kỹ thuật hiện đại.","Có đầy đủ vốn.","Có đầy đủ tài nguyên."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Lập kế hoạch chính xác.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Giải; ngăn; thay đổi kế hoạch dự án\".","tip":"Từ khóa nhận diện: \"Lập kế hoạch chính xác.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":14,"question":"Theo thống kê của Chaos, tỉ lệ thành công của các dự án phần mềm trong thập niên qua:","correct":"Có xu hướng tăng.","wrongs":["Lúc tăng, lúc giảm.","Có xu hướng giảm.","Không thay đổi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Có xu hướng tăng.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"thống kê của Chaos; tỉ lệ thành công; dự án phần mềm\".","tip":"Từ khóa nhận diện: \"Có xu hướng tăng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":15,"question":"Các đặc tính nào được xem là tiêu chuẩn để tuyển chọn người quản lý dự án?","correct":"Uy tín, nhạy bén, tác phong lãnh đạo và quản lý, khả năng chế ngự áp lực","wrongs":["Uy tín, nhạy bén, hoà đồng, khả năng chế ngự áp lực","Uy tín, nhạy bén, kinh nghiệm.","Chín chắn, nhạy bén, tác phong lãnh đạo và quản lý, khả năng chế ngự áp lực"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Uy tín, nhạy bén, tác phong lãnh đạo và quản lý, khả năng chế ngự áp lực</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"tiêu chuẩn để tuyển chọn; người quản lý dự án\".","tip":"Từ khóa nhận diện: \"Uy tín, nhạy bén, tác phong lãnh đạo và quản lý, khả năng chế ngự áp lực\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":16,"question":"Chọn thứ tự quản lý từ tổng quát đến cụ thể của các lĩnh vực sau","correct":"Quản lý → Quản lý dự án → Quản lý dự án phần mềm.","wrongs":["Quản lý dự án → Quản lý → Quản lý dự án phần mềm","Quản lý dự án → Quản lý dự án phần mềm → Quản lý","Quản lý → Quản lý dự án phần mềm → Quản lý dự án"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Quản lý → Quản lý dự án → Quản lý dự án phần mềm.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"từ tổng quát đến cụ thể; lĩnh\".","tip":"Từ khóa nhận diện: \"Quản lý → Quản lý dự án → Quản lý dự án phần mềm.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Quản lý\" và mốc cuối \"Quản lý dự án phần mềm\"."},{"id":17,"question":"Một dự án chỉ được tiến hành khi đáp ứng đầy đủ các yêu cầu nào sau đây?","correct":"Mục tiêu, yêu cầu của khách hàng, ngân sách, giải pháp thực hiện, kết quả mong đợi.","wrongs":["Mục tiêu, yêu cầu của khách hàng, ngân sách, thời gian thực hiện, kết quả mong đợi.","Mục tiêu, yêu cầu của khách hàng, ngân sách, kế hoạch thực hiện, kết quả mong đợi.","Mục tiêu, yêu cầu của khách hàng, ngân sách, công nghệ thực hiện, kết quả mong đợi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Mục tiêu, yêu cầu của khách hàng, ngân sách, giải pháp thực hiện, kết quả mong đợi.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đáp ứng đầy đủ; yêu cầu\".","tip":"Từ khóa nhận diện: \"Mục tiêu, yêu cầu của khách hàng, ngân sách, giải pháp thực hiện, kết quả mong đợi.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":18,"question":"Phát biểu nào sau đây không phải là đặc trưng của dự án?","correct":"Có nhiều mục đích khác nhau.","wrongs":["Được thực hiện dưới sự hợp tác của nhiều người.","Có tính tạm thời.","Có tính rủi ro."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Có nhiều mục đích khác nhau.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; đặc trưng của dự án\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; đặc trưng của dự án\" trước khi chọn \"Có nhiều mục đích khác nhau.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Khái niệm và đặc trưng dự án\"; chọn phương án lệch nhóm \"Có nhiều mục đích khác nhau.\"."},{"id":19,"question":"Khái niệm nào gồm tất cả các giai đoạn phát triển của một dự án phần mềm?","correct":"Chu kỳ sống.","wrongs":["Tiến trình dự án.","Thời gian.","Mô hình phát triển."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Chu kỳ sống.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"giai đoạn phát triển; dự án phần mềm\".","tip":"Từ khóa nhận diện: \"Chu kỳ sống.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":20,"question":"Khi nào người quản lý dự án nên được phân công quản lý dự án?","correct":"Trong giai đoạn khởi động dự án.","wrongs":["Trong khoảng thời gian phân tích rủi ro.","Khi các hợp đồng được ký kết.","Một khi ngân sách được hoạch định."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Trong giai đoạn khởi động dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"người quản lý dự án; quản lý dự án\".","tip":"Từ khóa nhận diện: \"Trong giai đoạn khởi động dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":21,"question":"Tài liệu nào sau đây có thông tin bổ nhiệm người quản lý dự án?","correct":"Điều lệ dự án.","wrongs":["Tài liệu quy trình tổ chứ","Kế hoạch dự án theo sơ đồ Gantt.","Ma trận trách nhiệm."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Điều lệ dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Tài; liệu; người quản lý dự án\".","tip":"Từ khóa nhận diện: \"Điều lệ dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":22,"question":"Sắp xếp theo thứ tự hợp lý cho các nhóm quy trình trong quản lý dự án phần mềm:","correct":"Khởi động, lập kế hoạch, thực hiện, theo dõi và giám sát, kết thúc.","wrongs":["Khởi động, lập kế hoạch, theo dõi và giám sát, thực hiện, kết thúc","Khởi động, theo dõi và giám sát, thực hiện, lập kế hoạch, kết thú","Khởi động, thực hiện, lập kế hoạch, theo dõi và giám sát, kết thúc"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Khởi động, lập kế hoạch, thực hiện, theo dõi và giám sát, kết thúc.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Sắp xếp theo thứ tự; nhóm quy trình; quản lý dự án phần mềm\".","tip":"Gặp câu hỏi thứ tự với \"Sắp xếp theo thứ tự; nhóm quy trình; quản lý dự án phần mềm\", nhớ nguyên chuỗi đáp án \"Khởi động, lập kế hoạch, thực hiện, theo dõi và giám sát, kết thúc.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Khởi động\" và mốc cuối \"kết thúc\"."},{"id":23,"question":"Nhóm quy trình quản lý dự án nào được lặp đi lặp lại trong suốt vòng đời dự án?","correct":"Lập kế hoạch, thực hiện, kiểm soát.","wrongs":["Khởi động, lập kế hoạch, thực hiện.","Khởi động, lập kế hoạch, kiểm soát.","Lập kế hoạch, kiểm soát, kết thúc."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Lập kế hoạch, thực hiện, kiểm soát.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Nhóm quy trình; dự án; vòng đời dự án\".","tip":"Từ khóa nhận diện: \"Lập kế hoạch, thực hiện, kiểm soát.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":24,"question":"Nhóm quy trình nào sau đây của dự án phần mềm có khối lượng công việc nhiều nhất?","correct":"Thực hiện.","wrongs":["Lập kế hoạch.","Khởi động.","Theo dõi và giám sát."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Thực hiện.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Nhóm quy trình; dự án phần mềm; khối lượng công việc nhiều nhất\".","tip":"Từ khóa nhận diện: \"Thực hiện.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":25,"question":"Nhóm tiến trình nào sau đây của dự án phần mềm có khối lượng công việc ít nhất?","correct":"Khởi động.","wrongs":["Lập kế hoạch.","Theo dõi và giám sát.","Thực hiện."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Khởi động.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Nhóm tiến trình; dự án phần mềm; khối lượng công việc ít nhất\".","tip":"Từ khóa nhận diện: \"Khởi động.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":26,"question":"Phát triển điều lệ dự án thuộc nhóm quy trình nào?","correct":"Khởi động dự án.","wrongs":["Lập kế hoạch dự án.","Xác định dự án","Nghiên cứu khả thi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Khởi động dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Phát triển điều lệ dự án; nhóm quy trình\".","tip":"Từ khóa nhận diện: \"Khởi động dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":27,"question":"Thứ tự đúng của các giai đoạn trong quy trình phát triển dự án phần mềm","correct":"Đặc tả, phân tích, thiết kế, thực hiện, phát hành.","wrongs":["Đặc tả, thiết kế, phân tích, thực hiện, phát hành.","Đặc tả, thiết kế, thực hiện, phân tích, phát hành.","Đặc tả, phân tích, thực hiện, thiết kế, phát hành."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Đặc tả, phân tích, thiết kế, thực hiện, phát hành.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Thứ tự đúng; quy trình phát triển dự án phần mềm\".","tip":"Gặp câu hỏi thứ tự với \"Thứ tự đúng; quy trình phát triển dự án phần mềm\", nhớ nguyên chuỗi đáp án \"Đặc tả, phân tích, thiết kế, thực hiện, phát hành.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Đặc tả\" và mốc cuối \"phát hành\"."},{"id":28,"question":"Quản lý tích hợp là:","correct":"Tích hợp 4 lĩnh vực hỗ trợ trong quản lý dự án và các tác động qua lại giữa chúng.","wrongs":["Tích hợp tất cả các lĩnh vực trong quản lý dự án và các tác động qua lại giữa chúng.","Tích hợp 4 lĩnh vực chính trong quản lý dự án và các tác động qua lại giữa chúng.","Tất cả các ý đều sai."],"explanation":"<strong>Bản chất:</strong> Người quản lý dự án (Project Manager - PM) là 'nhạc trưởng' điều phối toàn bộ các mảng (phạm vi, thời gian, chi phí, chất lượng, nhân sự, rủi ro) để gắn kết thành một thể thống nhất.<br><strong>Chi tiết kỹ thuật:</strong> Quản lý tích hợp (Project Integration Management) là trách nhiệm độc quyền của người quản lý dự án, không thể ủy quyền hoàn toàn cho bên khác.","tip":"Từ khóa nhận diện: \"Tích hợp 4 lĩnh vực hỗ trợ trong quản lý dự án và các tác động qua lại giữa chúng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":29,"question":"………. là quá trình xem xét tất cả các đề xuất thay đổi, phê duyệt các đề xuất thay đổi và thực hiện các thay đổi.","correct":"Quản lý thay đổi tích hợp.","wrongs":["Quản lý yêu cầu.","Quản lý rủi ro","Quản lý thay đổi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Quản lý thay đổi tích hợp.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đề xuất thay đổi; phê duyệt; đề xuất thay đổi\".","tip":"Từ khóa nhận diện: \"Quản lý thay đổi tích hợp.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":30,"question":"Tiêu chí quan trọng nào được nhắc đến trong báo cáo quản lý phạm vi?","correct":"Hoàn tất.","wrongs":["Kinh phí.","Lịch trình.","Chất lượng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoàn tất.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"nhắc; báo cáo quản lý phạm vi\".","tip":"Từ khóa nhận diện: \"Hoàn tất.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":31,"question":"Kế hoạch tiến độ dự án phải thể hiện đầy đủ các công việc trong:","correct":"WBS của dự án.","wrongs":["Hợp đồng dự án.","Điều lệ dự án.","Báo cáo nghiên cứu khả thi."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Từ khóa nhận diện: \"WBS của dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":32,"question":"Người quản lý dự án nên thực hiện hoạt động gì để xác định được tất cả các công việc của dự án","correct":"Lập cấu trúc phân chia công việc.","wrongs":["Lập kế hoạch quản lý rủi ro.","Phân công công việc rõ ràng.","Lập báo cáo nghiên cứu sơ bộ."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Lập cấu trúc phân chia công việc.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Người quản lý dự án; thực hiện\".","tip":"Từ khóa nhận diện: \"Lập cấu trúc phân chia công việc.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":33,"question":"Phạm vi dự án phần mềm đề cập đến:","correct":"Các quá trình và công việc liên quan đến tạo ra sản phẩm phần mềm.","wrongs":["Các kỹ thuật và nguồn nhân lực được sử dụng để tạo ra sản phẩm phần mềm.","Các quá trình được sử dụng để tạo ra sản phẩm phần mềm.","Các công việc liên quan đến việc tạo ra sản phẩm phần mềm."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Các quá trình và công việc liên quan đến tạo ra sản phẩm phần mềm.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Phạm vi; dự án phần mềm\".","tip":"Từ khóa nhận diện: \"Các quá trình và công việc liên quan đến tạo ra sản phẩm phần mềm.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":34,"question":"Phạm vi dự án phần mềm không đề cập đến:","correct":"Thời gian và chi phí phát triển phầm mềm.","wrongs":["Các công việc liên quan đến việc tạo ra sản phẩm phần mềm.","Các kỹ thuật được sử dụng để tạo ra sản phẩm phần mềm.","Các quá trình được sử dụng để tạo ra sản phẩm phần mềm."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Thời gian và chi phí phát triển phầm mềm.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Phạm vi; dự án phần mềm; không đề cập đến\".","tip":"Câu hỏi có tín hiệu phủ định \"không đề cập\". Đọc kỹ từ khóa \"Phạm vi; dự án phần mềm; không đề cập đến\" trước khi chọn \"Thời gian và chi phí phát triển phầm mềm.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý phạm vi và WBS\"; chọn phương án lệch nhóm \"Thời gian và chi phí phát triển phầm mềm.\"."},{"id":35,"question":"Phạm vi dự án là:","correct":"Những công việc cần phải thực hiện để dự án đạt được mục tiêu.","wrongs":["Các công việc được tiến hành trước khi dự án bắt đầu.","Ranh giới giữa các công việc cần phải thực hiện để dự án đạt được mục tiêu.","Những công việc không thuộc về dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Những công việc cần phải thực hiện để dự án đạt được mục tiêu.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Phạm vi dự án\".","tip":"Từ khóa nhận diện: \"Những công việc cần phải thực hiện để dự án đạt được mục tiêu.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":36,"question":"Chức năng chính của quản lý cấp cao trong quản lý phạm vi là:","correct":"Phê duyệt các tác động của các yêu cầu thay đổi.","wrongs":["Xác định phạm vi mới của dự án.","Bảo vệ những lợi ích chính của dự án.","Đưa ra các yêu cầu về thay đổi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Phê duyệt các tác động của các yêu cầu thay đổi.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"quản lý cấp cao; phạm vi\".","tip":"Từ khóa nhận diện: \"Phê duyệt các tác động của các yêu cầu thay đổi.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":37,"question":"Quản lý phạm vi dự án là:","correct":"Các quy trình xác định và kiểm soát những công việc của dự án và những công việc không thuộc dự án.","wrongs":["Các quy trình xác định những công việc của dự án và những công việc không thuộc dự án.","Các quy trình kiểm soát những công việc của dự án và những công việc không thuộc dự án.","Các quy trình xác định và kiểm soát những kế hoạch thực hiện dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Các quy trình xác định và kiểm soát những công việc của dự án và những công việc không thuộc dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Quản lý phạm vi dự án\".","tip":"Từ khóa nhận diện: \"Các quy trình xác định và kiểm soát những công việc của dự án và những công việc không thuộc dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":38,"question":"Chọn thứ tự đúng các bước quản lý phạm vi dự án:","correct":"Thu thập yêu cầu, xác định phạm vi, tạo cấu trúc WBS, xác nhận và kiểm soát phạm vi.","wrongs":["Thu thập yêu cầu, tạo cấu trúc WBS, xác nhận và kiểm soát phạm vi, xác định phạm vi.","Thu thập yêu cầu, xác nhận và kiểm soát phạm vi, tạo cấu trúc WBS, xác định phạm vi.","Thu thập yêu cầu, xác nhận và kiểm soát phạm vi, xác định phạm vi, tạo cấu trúc WBS."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; quản lý phạm vi dự án\", nhớ nguyên chuỗi đáp án \"Thu thập yêu cầu, xác định phạm vi, tạo cấu trúc WBS, xác nhận và kiểm soát phạm vi.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Thu thập yêu cầu\" và mốc cuối \"xác nhận và kiểm soát phạm vi\"."},{"id":39,"question":"Quản lý phạm vi dự án phần mềm không bao gồm các hoạt động nào?","correct":"Thiết kế và xây dựng phần mềm.","wrongs":["Xác nhận và kiểm tra phạm vi.","Xây dựng cấu trúc phân chia công việc.","Thu thập yêu cầu và xác định phạm vi."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Thiết kế và xây dựng phần mềm.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Quản lý phạm vi dự án phần mềm; không bao gồm\".","tip":"Câu hỏi có tín hiệu phủ định \"không bao gồm\". Đọc kỹ từ khóa \"Quản lý phạm vi dự án phần mềm; không bao gồm\" trước khi chọn \"Thiết kế và xây dựng phần mềm.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý phạm vi và WBS\"; chọn phương án lệch nhóm \"Thiết kế và xây dựng phần mềm.\"."},{"id":40,"question":"Cách phân chia nào sau đây không mô tả phương pháp phân chia công việc của WBS?","correct":"Phân chia cho đến khi còn ý nghĩa.","wrongs":["Phân chia cho đến khi công việc được thực hiện bởi một người.","Phân chia cho đến khi có thể ước lượng được.","Phân chia cho đến khi không thể phân chia được nữa."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Từ khóa nhận diện: \"Phân chia cho đến khi còn ý nghĩa.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":41,"question":"Work Breakdown Structure – WBS là:","correct":"Sự phân chia các hoạt động của một dự án.","wrongs":["Sự mô tả các hoạt động của một dự án.","Mô hình trách nhiệm của các trưởng nhóm.","Các thời điểm cuối cùng trong dự án."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Từ khóa nhận diện: \"Sự phân chia các hoạt động của một dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":42,"question":"Yếu tố nào sau đây không phải là đầu vào của hoạt động xây dựng WBS của dự án phần mềm?","correct":"Báo cáo nghiên cứu khả thi.","wrongs":["Quy trình phát triển phần mềm.","Báo cáo yêu cầu.","Báo cáo phạm vi dự án."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; đầu vào; xây dựng WBS\" trước khi chọn \"Báo cáo nghiên cứu khả thi.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý phạm vi và WBS\"; chọn phương án lệch nhóm \"Báo cáo nghiên cứu khả thi.\"."},{"id":43,"question":"Đặc trưng chính của WBS là:","correct":"Có hướng đi từ trên xuống.","wrongs":["Được chia thành nhiều mức.","Không nêu cách thức thực hiện công việc.","Có hướng đi từ dưới lên."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Từ khóa nhận diện: \"Có hướng đi từ trên xuống.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":44,"question":"Loại quan hệ nào biểu diễn sự bắt đầu của một công việc phụ thuộc vào sự kết thúc của một công việc khác?","correct":"Finish-to-Start (FS).","wrongs":["Finish-to-Finish (FF).","Start-to-Finish (SF).","Start-to-Start (SS)."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Finish-to-Start (FS).</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"diễn; bắt; khác\".","tip":"Từ khóa nhận diện: \"Finish-to-Start (FS).\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":45,"question":"Loại quan hệ nào biểu diễn sự kết thúc của một công việc phụ thuộc vào sự kết thúc của một công việc khác?","correct":"Finish-to-Finish (FF).","wrongs":["Start-to-Finish (SF).","Start-to-Start (SS).","Finish-to-Start (FS)."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Finish-to-Finish (FF).</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"diễn; thúc; khác\".","tip":"Từ khóa nhận diện: \"Finish-to-Finish (FF).\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":46,"question":"Loại quan hệ nào biểu diễn sự phụ thuộc giữa công việc kiểm thử đơn vị chỉ có thể hoàn thành sau khi công việc viết mã lệnh đã hoàn thành?","correct":"Finish-to-Finish (FF).","wrongs":["Start-to-Finish (SF).","Start-to-Start (SS).","Finish-to-Start (FS)."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Finish-to-Finish (FF).</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đơn; viết; lệnh\".","tip":"Từ khóa nhận diện: \"Finish-to-Finish (FF).\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":47,"question":"Chọn kiểu quan hệ phụ thuộc nhiệm vụ cho hoạt động: “Lập trình phải tiến hành trước khi kiểm thử”:","correct":"Logic.","wrongs":["Tùy ý.","Nguồn lực.","Quyết định của đội dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Logic.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"kiểu; quan hệ phụ thuộc nhiệm vụ; trước\".","tip":"Từ khóa nhận diện: \"Logic.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":48,"question":"Mối quan hệ của ba hạng mục công việc khi xây một tòa nhà bao gồm đổ móng, xây tường và lợp máy là:","correct":"Logic.","wrongs":["Nguồn lực.","Quyết định của đội dự án.","Tùy ý."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Logic.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"hạng; móng; tường\".","tip":"Từ khóa nhận diện: \"Logic.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":49,"question":"Kiểm soát tiến độ nằm ở nhóm quy trình nào của quản lý dự án?","correct":"Theo dõi và giám sát","wrongs":["Khởi động dự án.","Lập kế hoạch.","Thực hiện."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Theo dõi và giám sát</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Kiểm soát; nhóm quy trình; quản lý dự án\".","tip":"Từ khóa nhận diện: \"Theo dõi và giám sát\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":50,"question":"Lịch trình thực hiện dự án được thể hiện trong:","correct":"Kế hoạch tiến độ dự án.","wrongs":["Báo cáo nghiên cứu khả thi.","Báo cáo phạm vi dự án.","Các tài liệu khởi động dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Kế hoạch tiến độ dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Lịch trình thực hiện dự án; thể\".","tip":"Từ khóa nhận diện: \"Kế hoạch tiến độ dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":51,"question":"Người quản lý dự án cần kiểm tra tiến độ dự án khi nào?","correct":"Trong suốt các giai đoạn thực hiện dự án.","wrongs":["Ở giai đoạn một phần ba sau của quá trình thực hiện.","Khi dự án gần kết thúc.","Ở giai đoạn cuối cùng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Trong suốt các giai đoạn thực hiện dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Người quản lý dự án; tiến độ dự án\".","tip":"Từ khóa nhận diện: \"Trong suốt các giai đoạn thực hiện dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":52,"question":"Giả sử A là hoạt động phân tích, B là hoạt động thiết kế. Khi đó quan hệ phụ thuộc nhiệm vụ giữa A và B là:","correct":"Finish to start (FS).","wrongs":["Finish to finish (FF)","Start to finish (SF).","Start to start (SS)."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Finish to start (FS).</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Giả; thiết; quan hệ phụ thuộc nhiệm vụ\".","tip":"Từ khóa nhận diện: \"Finish to start (FS).\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":53,"question":"Công cụ phổ biến nhất để thiết lập sơ đồ Gantt là:","correct":"Microsoft Project.","wrongs":["Bảng.","Microsoft Visio.","Microsoft Word."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Microsoft Project.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"phổ; biến; sơ đồ Gantt\".","tip":"Từ khóa nhận diện: \"Microsoft Project.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":54,"question":"Sơ đồ Gantt","correct":"Trình bày toàn bộ các hoạt động của dự án ở dạng timeline.","wrongs":["Trình bày WBS trong mối quan hệ tài chính của dự án.","Thể hiện tổng thời gian của từng nhóm.","Thể hiện tổng thời gian của từng thành viên trong nhóm."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Trình bày toàn bộ các hoạt động của dự án ở dạng timeline.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Sơ đồ Gantt\".","tip":"Từ khóa nhận diện: \"Trình bày toàn bộ các hoạt động của dự án ở dạng timeline.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":55,"question":"Chọn thuật ngữ tương ứng với phát biểu “đường dài nhất đi từ đỉnh bắt đầu đến đỉnh kết thúc của sơ đồ mạng công việc”:","correct":"Đường găng.","wrongs":["Đường chart.","Đường slack.","Đường Gantt."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Đường găng.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"tương; đường; sơ đồ mạng công việc\".","tip":"Từ khóa nhận diện: \"Đường găng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":56,"question":"Giả sử A là hoạt động thu thập yêu cầu phần mềm, B là hoạt động phân tích yêu cầu phần mềm. Khi đó quan hệ phụ thuộc nhiệm vụ giữa A và B là gì khi hai công việc này cùng thực hiện?","correct":"Start to start (SS).","wrongs":["Start to finish (SF).","Finish to finish (FF).","Finish to start (FS)."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Start to start (SS).\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":57,"question":"Phương pháp ước lượng điểm trường hợp sử dụng cần bao nhiêu loại dữ liệu đầu vào?","correct":"4","wrongs":["5","3","6"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>4</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; bao nhiêu; đầu vào\".","tip":"Gặp dạng hỏi số lượng \"bao nhiêu\" cùng từ khóa \"ước lượng điểm trường hợp sử dụng; bao nhiêu; đầu vào\" thì chốt \"4\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"4\"."},{"id":58,"question":"Để tính tiến độ dự án bằng phương pháp sơ đồ mạng công việc, chúng ta cần xác định bao nhiêu mốc thời gian trên từng công việc?","correct":"4","wrongs":["5","2","3"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>4</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"tiến độ dự án; sơ đồ mạng công việc; bao nhiêu\".","tip":"Gặp dạng hỏi số lượng \"bao nhiêu\" cùng từ khóa \"tiến độ dự án; sơ đồ mạng công việc; bao nhiêu\" thì chốt \"4\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"4\"."},{"id":59,"question":"Chọn công thức tính phương sai về chi phí:","correct":"CV = BCWP - ACWP.","wrongs":["CV = ACWP - BCWP.","CV = BCWS - BCWP.","CV = BCWP - BCWS."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"Chọn công thức; chi phí\", nhớ đúng biểu thức \"CV = BCWP - ACWP.\".","distinguish":"Loại công thức đảo tử–mẫu hoặc nhầm BCWP, BCWS, ACWP; giữ nguyên \"CV = BCWP - ACWP.\"."},{"id":60,"question":"Chọn công thức tính chỉ số thực hiện về chi phí (Cost performance index):","correct":"CPI = BCWP / ACWP.","wrongs":["CPI = BCWS / BCWP.","CPI = BCWP / BCWS.","CPI = ACWP / BCWP."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"Chọn công thức; chỉ số thực hiện về chi phí\", nhớ đúng biểu thức \"CPI = BCWP / ACWP.\".","distinguish":"Loại công thức đảo tử–mẫu hoặc nhầm BCWP, BCWS, ACWP; giữ nguyên \"CPI = BCWP / ACWP.\"."},{"id":61,"question":"Chọn công thức tính chỉ số thực hiện về chi phí (Schedule performance index):","correct":"SPI = BCWP / BCWS.","wrongs":["SPI = BCWP / ACWP.","SPI = BCWS / BCWP.","SPI = ACWP / BCWP."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"Chọn công thức; chỉ số thực hiện về chi phí\", nhớ đúng biểu thức \"SPI = BCWP / BCWS.\".","distinguish":"Loại công thức đảo tử–mẫu hoặc nhầm BCWP, BCWS, ACWP; giữ nguyên \"SPI = BCWP / BCWS.\"."},{"id":62,"question":"Chọn công thức tính phương sai về lịch biểu:","correct":"SV = BCWP - ACWP.","wrongs":["SV = ACWP - BCWP","SV = BCWP - BCWS","SV = BCWS - BCWP"],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"Chọn công thức; tính; lịch\", nhớ đúng biểu thức \"SV = BCWP - ACWP.\".","distinguish":"Loại công thức đảo tử–mẫu hoặc nhầm BCWP, BCWS, ACWP; giữ nguyên \"SV = BCWP - ACWP.\"."},{"id":63,"question":"Một dự án phát triển phần mềm ước tính hoàn tất trong 6 tháng với chi phí 10.000$. Khi dự án còn 2 tháng nữa sẽ kết thúc, 55% công việc của dự án đã hoàn tất, 7.000$ đã dùng cho các công việc. Phương sai lịch biểu (SV) là:","correct":"-1.160$.","wrongs":["3.000$.","1.160$.","-3.000$."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"hoàn tất; Phương sai lịch biểu\", nhớ đúng biểu thức \"-1.160$.\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"-1.160$.\"."},{"id":64,"question":"Một dự án phát triển phần mềm ước tính hoàn tất trong 2 tháng với chi phí 40.000$. Khi dự án còn 1 tháng để kết thúc, 60% công việc của dự án đã hoàn tất, 27.000$ đã dùng cho các công việc. Phương sai chi phí (CV) là:","correct":"-3.000$.","wrongs":["7.000$.","3.000$.","4.000$."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Gặp từ khóa công thức \"hoàn tất; Phương sai chi phí\", nhớ đúng biểu thức \"-3.000$.\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"-3.000$.\"."},{"id":65,"question":"Khi phân tích giá trị thu được của dự án và biểu diễn trạng thái của dự án bằng biểu đồ thì số khả năng của trạng thái là","correct":"6","wrongs":["3","5","4"],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Từ khóa nhận diện: \"6\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"6\"."},{"id":66,"question":"Trong phân tích giá trị thu được, giá trị của CV âm và SV dương:","correct":"Giá trị khối lượng công việc hoàn thành nhỏ hơn chi phí thực tế nhưng lớn hơn chi phí theo kế hoạch.","wrongs":["Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế nhưng nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc đã hoàn thành nhỏ hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Từ khóa nhận diện: \"Giá trị khối lượng công việc hoàn thành nhỏ hơn chi phí thực tế nhưng lớn hơn chi phí theo kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":67,"question":"Phân tích giá trị thu được, giá trị của CV dương và SV âm:","correct":"Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế nhưng nhỏ hơn chi phí theo kế hoạch.","wrongs":["Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc đã hoàn thành nhỏ hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc hoàn thành nhỏ hơn chi phí thực tế nhưng lớn hơn chi phí theo kế hoạch."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Từ khóa nhận diện: \"Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế nhưng nhỏ hơn chi phí theo kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":68,"question":"Trong phân tích giá trị thu được, giá trị của CV và SV đều dương khi:","correct":"Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","wrongs":["Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế nhưng nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc đã hoàn thành nhỏ hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc hoàn thành nhỏ hơn chi phí thực tế nhưng lớn hơn chi phí theo kế hoạch."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Từ khóa nhận diện: \"Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":69,"question":"Trong phân tích giá trị thu được, giá trị của CV và SV đều âm khi:","correct":"Giá trị khối lượng công việc đã hoàn thành nhỏ hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","wrongs":["Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế nhưng nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc đã hoàn thành lớn hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.","Giá trị khối lượng công việc hoàn thành nhỏ hơn chi phí thực tế nhưng lớn hơn chi phí theo kế hoạch."],"explanation":"<strong>Bản chất:</strong> Kỹ thuật Quản lý Giá trị Thu được (Earned Value Management - EVM):<br>• <strong>CV = EV - AC</strong> (Chênh lệch chi phí): CV > 0 là tiết kiệm chi phí, CV < 0 là vượt ngân sách.<br>• <strong>SV = EV - PV</strong> (Chênh lệch tiến độ): SV > 0 là vượt tiến độ, SV < 0 là chậm tiến độ.<br>• <strong>CPI = EV / AC</strong> (Chỉ số hiệu quả chi phí): CPI > 1 là tốt.<br>• <strong>SPI = EV / PV</strong> (Chỉ số hiệu quả tiến độ): SPI > 1 là tốt.","tip":"Từ khóa nhận diện: \"Giá trị khối lượng công việc đã hoàn thành nhỏ hơn chi phí thực tế và chi phí thực tế nhỏ hơn chi phí theo kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":70,"question":"Loại chi phí nào sau đây không làm ảnh hưởng đến chất lượng của dự án","correct":"Di chuyển phần mềm.","wrongs":["Thất bại.","Dự phòng.","Thẩm định."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Di chuyển phần mềm.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"chi phí; làm; ảnh\".","tip":"Từ khóa nhận diện: \"Di chuyển phần mềm.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":71,"question":"Chỉ số thực hiện về chi phí có giá trị lớn hơn 1 khi:","correct":"Chi phí thực hiện công việc nhỏ hơn chi phí theo kế hoạch.","wrongs":["Chi phí thực hiện công việc bằng chi phí theo kế hoạch.","Chi phí thực hiện công việc lớn hơn chi phí theo kế hoạch.","Tất cả đều sai."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Chi phí thực hiện công việc nhỏ hơn chi phí theo kế hoạch.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chỉ số thực hiện về chi phí; lớn hơn 1\".","tip":"Từ khóa nhận diện: \"Chi phí thực hiện công việc nhỏ hơn chi phí theo kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":72,"question":"Chọn ba đặc trưng quan trọng của dự án:","correct":"Phạm vi, thời gian và chi phí.","wrongs":["Phạm vi, thời gian và tài nguyên","Phạm vi, thời gian và giải pháp.","Phạm vi, thời gian và công nghệ."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Phạm vi, thời gian và chi phí.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đặc; trưng; dự án\".","tip":"Từ khóa nhận diện: \"Phạm vi, thời gian và chi phí.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":73,"question":"Yếu tố nào sau đây không phải là đầu vào của quá trình lập kế hoạch là:","correct":"Chi phí thực hiện từng công việc.","wrongs":["Mối quan hệ giữa các công việc.","Thời gian thực hiện các công việc.","Danh sách các công việc."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Chi phí thực hiện từng công việc.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; đầu vào của quá trình lập kế hoạch\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; đầu vào của quá trình lập kế hoạch\" trước khi chọn \"Chi phí thực hiện từng công việc.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Chi phí và ngân sách\"; chọn phương án lệch nhóm \"Chi phí thực hiện từng công việc.\"."},{"id":74,"question":"Phát biểu nào sau đây mô tả chính xác phương pháp ước lượng từ dưới lên?","correct":"Phương pháp đòi hỏi người lập kế hoạch phải sử dụng càng nhiều chi tiết càng tốt nhằm phân chia dự án thành các gói công việc đủ nhỏ để cho phép ước tính chi phí chính xác","wrongs":["Phương pháp đơn giản nhất để ước tính chi phí trong một dự án với nhiều điểm tương đồng với các dự án thành công khác","Phương pháp đòi hỏi một hoạt động hay sự kiện riêng lẻ có sự phụ thuộc lẫn nhau đối với người tiền nhiệm, người thành công cũng như các hoạt động hay sự kiện song song.","Phương pháp có thể được mô tả bề ngoài trong Kỹ thuật duyệt và đánh giá chương trình hoặc sơ đồ Gantt."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Phương pháp đòi hỏi người lập kế hoạch phải sử dụng càng nhiều chi tiết càng tốt nhằm phân chia dự án thành các gói công việc đủ nhỏ để cho phép ước tính chi phí chính xác</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"chính; dưới; lên\".","tip":"Từ khóa nhận diện: \"Phương pháp đòi hỏi người lập kế hoạch phải sử dụng càng nhiều chi tiết càng tốt nhằm phân chia dự án thành các gói công việc đủ nhỏ để cho phép ước tính chi phí chính xác\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":75,"question":"Trình tự các bước xây dựng kế hoạch dự án là:","correct":"Lập WBS → ước lượng → lập lịch biểu.","wrongs":["Lập lịch biểu → lập WBS → ước lượng.","Ước lượng → lập lịch biểu → lập WBS.","Ước lượng → lập WBS → lập lịch biểu."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Gặp câu hỏi thứ tự với \"Trình tự các bước; dự án\", nhớ nguyên chuỗi đáp án \"Lập WBS → ước lượng → lập lịch biểu.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Lập WBS\" và mốc cuối \"lập lịch biểu\"."},{"id":76,"question":"Cách ước lượng tỉ lệ phần trăm hoàn thành cho các công việc dự án không theo quy ước là:","correct":"Ước lượng 40-60.","wrongs":["Ước lượng 0-100.","Ước lượng 50-50","Ước lượng cân đối."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Ước lượng 40-60.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Cách; trăm; dự án\".","tip":"Từ khóa nhận diện: \"Ước lượng 40-60.\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"Ước lượng 40-60.\"."},{"id":77,"question":"Phương pháp nào sau đây không phải là phương pháp ước lượng theo công thức?","correct":"Tương tự.","wrongs":["Số dòng lệnh.","Điểm trường hợp sử dụng.","Điểm chức năng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Tương tự.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; lượng; thức\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; lượng; thức\" trước khi chọn \"Tương tự.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng phần mềm\"; chọn phương án lệch nhóm \"Tương tự.\"."},{"id":78,"question":"Phương pháp nào sau đây không phải là phương pháp ước lượng?","correct":"Brainstorming.","wrongs":["Từ dưới lên.","Lấy ý kiến chuyên gia.","Trả giá để thắng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Brainstorming.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; ước; lượng\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; ước; lượng\" trước khi chọn \"Brainstorming.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng phần mềm\"; chọn phương án lệch nhóm \"Brainstorming.\"."},{"id":79,"question":"Phương pháp nào sau đây không hỗ trợ lập kế hoạch tiến độ dự án:","correct":"COCOMO","wrongs":["Biểu đồ Gantt.","PERT.","Đường tới hạn."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>COCOMO</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không hỗ trợ; kế hoạch tiến độ dự án\".","tip":"Câu hỏi có tín hiệu phủ định \"không hỗ trợ\". Đọc kỹ từ khóa \"không hỗ trợ; kế hoạch tiến độ dự án\" trước khi chọn \"COCOMO\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng phần mềm\"; chọn phương án lệch nhóm \"COCOMO\"."},{"id":80,"question":"Phương pháp nào sau đây là phương pháp ước lượng nỗ lực:","correct":"COCOMO","wrongs":["Từ trên xuống.","Từ dưới lên.","Tương tự."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>COCOMO</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng nỗ lực\".","tip":"Từ khóa nhận diện: \"COCOMO\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":81,"question":"Phương pháp ước lượng nào sau đây có ưu điểm là không ước lượng quá mức kinh phí?","correct":"Quy tắc Parkinson.","wrongs":["Lấy ý kiến chuyên gia.","Từ trên xuống.","Trả giá để thắng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Quy tắc Parkinson.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"mức; kinh; phí\".","tip":"Từ khóa nhận diện: \"Quy tắc Parkinson.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":82,"question":"Chọn thứ tự đúng của các bước trong nhóm quy trình lập kế hoạch dự án:","correct":"Lập WBS, ước lượng, lập kế hoạch tiến độ.","wrongs":["Lập WBS, lập kế hoạch tiến độ, ước lượng.","Ước lượng, lập WBS, lập kế hoạch tiến độ.","Lập kế hoạch tiến độ, ước lượng, lập WBS."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; nhóm quy trình lập kế hoạch; dự án\", nhớ nguyên chuỗi đáp án \"Lập WBS, ước lượng, lập kế hoạch tiến độ.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Lập WBS\" và mốc cuối \"lập kế hoạch tiến độ\"."},{"id":83,"question":"Phương pháp ước lượng nào sau đây có ưu điểm là thường giành được hợp đồng?","correct":"Trả giá để thắng.","wrongs":["Lấy ý kiến chuyên gia.","Từ trên xuống.","Quy tắc Parkinson."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Trả giá để thắng.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"thường; giành; đồng\".","tip":"Từ khóa nhận diện: \"Trả giá để thắng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":84,"question":"Chi phí thực hiện phương pháp ước lượng tương tự là:","correct":"Thấp.","wrongs":["Rất cao.","Trung bình.","Cao."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Thấp.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chi; phí; thực hiện\".","tip":"Từ khóa nhận diện: \"Thấp.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":85,"question":"Yếu tố nào sau đây không phải là đặc trưng của WBS?","correct":"Có hướng đi từ dưới lên.","wrongs":["Có hướng đi từ trên xuống.","Được chia thành nhiều mức.","Không nêu cách thức thực hiện công việc."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; WBS\" trước khi chọn \"Có hướng đi từ dưới lên.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng phần mềm\"; chọn phương án lệch nhóm \"Có hướng đi từ dưới lên.\"."},{"id":86,"question":"Kết quả của ước lượng là đầu vào của nhóm tiến trình nào sau đây?","correct":"Lập kế hoạch.","wrongs":["Thực hiện.","Kiểm tra và giám sát","Khởi động."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Lập kế hoạch.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đầu vào; nhóm tiến trình\".","tip":"Từ khóa nhận diện: \"Lập kế hoạch.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":87,"question":"Phương pháp ước lượng từ dưới lên có độ chính xác như thế nào?","correct":"Cao","wrongs":["Tương đối thấp.","Trung bình.","Thấp."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Cao</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"dưới; lên; độ chính xác\".","tip":"Từ khóa nhận diện: \"Cao\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":88,"question":"Phương pháp ước lượng nào sau đây có ưu điểm là có độ chính xác cao?","correct":"Từ dưới lên","wrongs":["Từ trên xuống","Số dòng lệnh.","Trả giá để thắng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Từ dưới lên</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"độ chính xác cao\".","tip":"Từ khóa nhận diện: \"Từ dưới lên\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":89,"question":"Đầu vào của ước lượng kích thước phần mềm là:","correct":"Báo cáo phạm vi.","wrongs":["Điều lệ dự án.","Ma trận truy xuất yêu cầu.","Hợp đồng dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Báo cáo phạm vi.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Đầu; ước lượng kích thước\".","tip":"Từ khóa nhận diện: \"Báo cáo phạm vi.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":90,"question":"Phương pháp ước lượng nỗ lực COCOMO sử dụng đơn vị số dòng mã lệnh nào?","correct":"Hàng ngàn.","wrongs":["Hàng chục.","Hàng trăm.","Hàng chục ngàn."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hàng ngàn.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng nỗ lực; COCOMO\".","tip":"Từ khóa nhận diện: \"Hàng ngàn.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":91,"question":"Các nghiên cứu gần đây chỉ ra rằng ước lượng phần mềm có sai số khoảng:","correct":"30%","wrongs":["35%","25%","20%"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>30%</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng phần mềm; sai số\".","tip":"Từ khóa nhận diện: \"30%\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"30%\"."},{"id":92,"question":"Trong ước lượng phần mềm, phương pháp ước lượng từ dưới lên (bottom-up) cho rằng:","correct":"Chi phí sẽ được ước lượng chi tiết dựa vào các công việc trong dự án.","wrongs":["Ngân sách năm nay sẽ ít hơn 20% so với năm trước","Ngân sách năm nay sẽ nhiều hơn 20% so với năm trước","Chi phí sẽ được ước lượng ở mức thấp nhất nếu có thể."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Chi phí sẽ được ước lượng chi tiết dựa vào các công việc trong dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng phần mềm; dưới; bottom-up\".","tip":"Từ khóa nhận diện: \"Chi phí sẽ được ước lượng chi tiết dựa vào các công việc trong dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":93,"question":"Ước lượng phần mềm được thực hiện ngay sau hoạt động quản lý dự án nào?","correct":"Tạo WBS.","wrongs":["Lập điều lệ dự án.","Giám sát dự án.","Lập kế hoạch."],"explanation":"<strong>Bản chất:</strong> WBS (Work Breakdown Structure) là kỹ thuật 'chia để trị', phân tách toàn bộ công việc dự án thành các gói công việc (Work Packages) nhỏ hơn, dễ quản lý và ước lượng hơn.<br><strong>Chi tiết kỹ thuật:</strong> WBS là nền tảng để xây dựng lịch biểu tiến độ và dự toán ngân sách chi phí.","tip":"Từ khóa nhận diện: \"Tạo WBS.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":94,"question":"Ước lượng phần mềm trong giai đoạn nào sau đây sẽ có sai số nhiều nhất?","correct":"Định nghĩa.","wrongs":["Phân tích.","Thực hiện.","Khảo sát"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Định nghĩa.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Ước lượng phần mềm; sai số\".","tip":"Từ khóa nhận diện: \"Định nghĩa.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":95,"question":"Chọn thứ tự đúng của ước lượng phần mềm:","correct":"Ước lượng kích thước → Ước lượng nỗ lực → Ước lượng lịch biểu → Ước lượng chi phí.","wrongs":["Ước lượng lịch biểu → Ước lượng kích thước → Ước lượng nỗ lực → Ước lượng chi phí.","Ước lượng kích thước → Ước lượng lịch biểu → Ước lượng nỗ lực → Ước lượng chi phí.","Ước lượng nỗ lực → Ước lượng lịch biểu → Ước lượng kích thước → Ước lượng chi phí."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Ước lượng kích thước → Ước lượng nỗ lực → Ước lượng lịch biểu → Ước lượng chi phí.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chọn thứ tự đúng; ước lượng phần mềm\".","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; ước lượng phần mềm\", nhớ nguyên chuỗi đáp án \"Ước lượng kích thước → Ước lượng nỗ lực → Ước lượng lịch biểu → Ước lượng chi phí.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Ước lượng kích thước\" và mốc cuối \"Ước lượng chi phí\"."},{"id":96,"question":"Phương pháp nào sau đây là phương pháp ước lượng theo công thức?","correct":"Điểm chức năng.","wrongs":["Số dòng lệnh.","Số nút trong lưu đồ dữ liệu (DFD).","Tương tự."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Gặp từ khóa công thức \"ước; lượng; thức\", nhớ đúng biểu thức \"Điểm chức năng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":97,"question":"Thành phần nào sau đây không phải là đầu vào của phương pháp ước lượng điểm chức năng?","correct":"Các tập tin mã lệnh.","wrongs":["Các giao diện ngoại vi.","Các đầu vào ngoại vi.","Đầu ra ngoại vi."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; đầu vào; ước lượng điểm chức năng\" trước khi chọn \"Các tập tin mã lệnh.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng điểm chức năng\"; chọn phương án lệch nhóm \"Các tập tin mã lệnh.\"."},{"id":98,"question":"Sau khi ước lượng kích thước phần mềm bằng phương pháp điểm chức năng, ước lượng nỗ lực của dự án sẽ được tính theo phương pháp nào?","correct":"Xác định số giờ làm việc cho mỗi điểm trường hợp sử dụng.","wrongs":["Xác định số dòng mã lệnh cho mỗi điểm trường hợp sử dụng.","Dùng phương pháp ước lượng nỗ lực COCOMO.","Tất cả đều sai."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Từ khóa nhận diện: \"Xác định số giờ làm việc cho mỗi điểm trường hợp sử dụng.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":99,"question":"Phương pháp ước lượng điểm chức năng sử dụng bao nhiêu loại dữ liệu đầu vào?","correct":"5","wrongs":["4","3","6"],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Gặp dạng hỏi số lượng \"bao nhiêu\" cùng từ khóa \"ước lượng điểm chức năng; bao nhiêu; đầu vào\" thì chốt \"5\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"5\"."},{"id":100,"question":"Chọn thứ tự đúng của các bước ước lượng điểm chức năng:","correct":"Tính điểm chức năng, đánh giá yếu tố phức tạp kỹ thuật, tính điểm chức năng điều chỉnh.","wrongs":["Tính điểm chức năng điều chỉnh, tính điểm chức năng, đánh giá yếu tố phức tạp kỹ thuật.","Tính điểm chức năng điều chỉnh, đánh giá yếu tố phức tạp kỹ thuật, tính điểm chức năng.","Đánh giá yếu tố phức tạp kỹ thuật, tính điểm chức năng điều chỉnh, tính điểm chức năng."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; ước lượng điểm chức năng\", nhớ nguyên chuỗi đáp án \"Tính điểm chức năng, đánh giá yếu tố phức tạp kỹ thuật, tính điểm chức năng điều chỉnh.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Tính điểm chức năng\" và mốc cuối \"tính điểm chức năng điều chỉnh\"."},{"id":101,"question":"Trong phương pháp ước lượng điểm chức năng, yếu tố phức tạp kỹ thuật (TCF) có miền giá trị từ:","correct":"Từ 0,65 đến 1,35.","wrongs":["Từ 0,65 đến 1,5.","Từ 0,65 đến 1.","Từ 0,65 đến 2."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Từ khóa nhận diện: \"Từ 0,65 đến 1,35.\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"Từ 0,65 đến 1,35.\"."},{"id":102,"question":"Thành phần nào sau đây không phải là đầu vào của phương pháp ước lượng điểm trường hợp sử dụng?","correct":"Câu truy vấn.","wrongs":["Tác nhân.","Trường hợp sử dụng.","Yếu tố phức tạp kỹ thuật."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Câu truy vấn.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"không phải là; đầu vào; ước lượng điểm trường hợp sử dụng\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; đầu vào; ước lượng điểm trường hợp sử dụng\" trước khi chọn \"Câu truy vấn.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng điểm trường hợp sử dụng\"; chọn phương án lệch nhóm \"Câu truy vấn.\"."},{"id":103,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, giá trị của tham số C2 của biểu thức tính yếu tố phức tạp môi trường (EF) có giá trị là:","correct":"-0,03","wrongs":["0,3","-0,3","0,03"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>-0,03</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; C2; yếu tố phức tạp môi trường\".","tip":"Từ khóa nhận diện: \"-0,03\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"-0,03\"."},{"id":104,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, giá trị của tham số C2 của biểu thức tính yếu tố phức tạp kỹ thuật (TCF) có giá trị là:","correct":"0,01","wrongs":["0,001","1","0,1"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>0,01</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; C2; yếu tố phức tạp kỹ thuật\".","tip":"Từ khóa nhận diện: \"0,01\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"0,01\"."},{"id":105,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, giá trị của tham số C1 của biểu thức tính yếu tố phức tạp kỹ thuật (TCF) có giá trị là:","correct":"0,65","wrongs":["0,75","0,45","0,55"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>0,65</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; C1; yếu tố phức tạp kỹ thuật\".","tip":"Từ khóa nhận diện: \"0,65\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"0,65\"."},{"id":106,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, giá trị của tham số C1 của biểu thức tính yếu tố phức tạp môi trường (EF) có giá trị là:","correct":"1,4","wrongs":["0,4","1,44","0,44"],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>1,4</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; C1; yếu tố phức tạp môi trường\".","tip":"Từ khóa nhận diện: \"1,4\".","distinguish":"Loại các lựa chọn khác dấu, khác đơn vị hoặc khác phần thập phân; giữ đúng \"1,4\"."},{"id":107,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, yếu tố nào sau đây không phải là yếu tố phức tạp kỹ thuật?","correct":"Ngôn ngữ lập trình có độ khó cao.","wrongs":["Tính bảo mật cao.","Khả năng tái sử dụng mã nguồn.","Tính khả chuyển."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Ngôn ngữ lập trình có độ khó cao.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; không phải là; yếu tố phức tạp kỹ thuật\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"ước lượng điểm trường hợp sử dụng; không phải là; yếu tố phức tạp kỹ thuật\" trước khi chọn \"Ngôn ngữ lập trình có độ khó cao.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng điểm trường hợp sử dụng\"; chọn phương án lệch nhóm \"Ngôn ngữ lập trình có độ khó cao.\"."},{"id":108,"question":"Chọn thứ tự đúng của các bước ước lượng điểm trường hợp sử dụng:","correct":"Tính điểm trường hợp sử dụng, đánh giá yếu tố phức tạp kỹ thuật và môi trường, tính điểm trường hợp sử dụng điều chỉnh.","wrongs":["Đánh giá yếu tố phức tạp kỹ thuật, tính điểm trường hợp sử dụng điều chỉnh, tính điểm trường hợp sử dụng.","Tính điểm trường hợp sử dụng điều chỉnh, tính điểm trường hợp sử dụng, đánh giá yếu tố phức tạp kỹ thuật.","Tính điểm trường hợp sử dụng điều chỉnh, đánh giá yếu tố phức tạp kỹ thuật, tính điểm trường hợp sử dụng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Tính điểm trường hợp sử dụng, đánh giá yếu tố phức tạp kỹ thuật và môi trường, tính điểm trường hợp sử dụng điều chỉnh.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chọn thứ tự đúng; ước lượng điểm trường hợp sử dụng\".","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; ước lượng điểm trường hợp sử dụng\", nhớ nguyên chuỗi đáp án \"Tính điểm trường hợp sử dụng, đánh giá yếu tố phức tạp kỹ thuật và môi trường, tính điểm trường hợp sử dụng điều chỉnh.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Tính điểm trường hợp sử dụng\" và mốc cuối \"tính điểm trường hợp sử dụng điều chỉnh\"."},{"id":109,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, thuật ngữ UAW là:","correct":"Unadjusted actor weight.","wrongs":["Unified actor weight.","Unadjusted actor worl","Unified actor world."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Unadjusted actor weight.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; UAW\".","tip":"Từ khóa nhận diện: \"Unadjusted actor weight.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":110,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, thuật ngữ UUCP là:","correct":"Unadjusted use case point.","wrongs":["Unified use case protocol.","Unadjusted use case protocol.","Unified use case point."],"explanation":"<strong>Bản chất:</strong> Phương pháp Function Point (FP) và Use Case Point (UCP) dùng để đo đạc 'kích thước chức năng' của phần mềm độc lập với ngôn ngữ lập trình, từ đó suy ra số giờ công và chi phí cần thiết.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình: Tính điểm thô $\\rightarrow$ Đánh giá hệ số phức tạp kỹ thuật/môi trường $\\rightarrow$ Tính điểm hiệu chỉnh.","tip":"Từ khóa nhận diện: \"Unadjusted use case point.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":111,"question":"Trong phương pháp ước lượng điểm trường hợp sử dụng, yếu tố nào sau đây không phải là yếu tố phức tạp môi trường?","correct":"Xử lý tương tranh","wrongs":["Có nhân viên làm việc bán thời gian.","Độ ổn định của các yêu cầu.","Đội dự án quen thuộc với UML."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Xử lý tương tranh</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"ước lượng điểm trường hợp sử dụng; không phải là; yếu tố phức tạp môi trường\".","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"ước lượng điểm trường hợp sử dụng; không phải là; yếu tố phức tạp môi trường\" trước khi chọn \"Xử lý tương tranh\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Ước lượng điểm trường hợp sử dụng\"; chọn phương án lệch nhóm \"Xử lý tương tranh\"."},{"id":112,"question":"Một dự án phần mềm mới có thể đem lại lợi nhuận cho tổ chức hoặc sẽ bán không đượĐiều đó được xếp vào loại rủi ro gì?","correct":"Rủi ro về thị trường.","wrongs":["Rủi ro về con người.","Rủi ro về tài chính.","Rủi ro về kỹ thuật."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Rủi ro về thị trường.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":113,"question":"Chọn quy trình đúng trong kiểm soát rủi ro:","correct":"Nhận diện → phân tích → xử lý.","wrongs":["Lập kế hoạch → xử lý → điều khiển.","Nhận diện → phân tích → xếp ưu tiên.","Phân tích → xếp ưu tiên → điều khiển."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Nhận diện → phân tích → xử lý.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":114,"question":"Lập kế hoạch khắc phục tác hại khi rủi ro xảy ra là hành động của chiến lược ứng phó rủi ro nào sau đây?","correct":"Chấp nhận.","wrongs":["Tránh né.","Chuyển giao.","Giảm nhẹ"],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Chấp nhận.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":115,"question":"Chọn phát biểu đúng về quản lý rủi ro:","correct":"Quản lý rủi ro là việc dự đoán, phát hiện, phân tích, xử lý và kiểm soát rủi ro.","wrongs":["Quản lý rủi ro bảo đảm cho dự án thành công.","Quản lý rủi ro là sự lo lắng về dự án.","Quản lý rủi ro là chuẩn bị sẵn ngân sách, nhân lực để khắc phục rủi ro."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Quản lý rủi ro là việc dự đoán, phát hiện, phân tích, xử lý và kiểm soát rủi ro.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":116,"question":"Người quản lý dự án phần mềm sẽ đưa những rủi ro nào vào kế hoạch quản lý rủi ro?","correct":"Các rủi ro có nguy cơ cao.","wrongs":["Các rủi ro có xác suất xảy ra cao.","Các rủi ro có mức độ tác động lớn.","Tất cả các rủi ro được nhận diện."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Các rủi ro có nguy cơ cao.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":117,"question":"Quản lý rủi ro được thực hiện ở nhóm tiến trình nào của quản lý dự án?","correct":"Kiểm soát.","wrongs":["Thực hiện.","Khởi động.","Lập kế hoạch."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Kiểm soát.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":118,"question":"Quản lý rủi ro có thể được tích hợp vào quy trình phát triển phần mềm nào sau đây:","correct":"Mô hình xoắn ốc.","wrongs":["Mô hình chữ V.","Mô hình prototype.","Mô hình thác nước."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Mô hình xoắn ốc.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":119,"question":"Hoạt động nào sau đây không thuộc về quản lý rủi ro dự án?","correct":"Đánh giá tiến độ thực hiện dự án.","wrongs":["Tìm giải pháp giảm thiểu mức độ tác động.","Xác định xác suất xuất hiện.","Đánh giá mức độ tác động."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Câu hỏi có tín hiệu phủ định \"không thuộc\". Đọc kỹ từ khóa \"không thuộc về; quản lý rủi ro; dự án\" trước khi chọn \"Đánh giá tiến độ thực hiện dự án.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý rủi ro\"; chọn phương án lệch nhóm \"Đánh giá tiến độ thực hiện dự án.\"."},{"id":120,"question":"Chiến lược nào sau đây không được dùng để ứng phó với các rủi ro?","correct":"Không chấp nhận.","wrongs":["Tránh.","Giảm nhẹ.","Chấp nhận."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Câu hỏi có tín hiệu phủ định \"không được dùng\". Đọc kỹ từ khóa \"không được dùng; rủi ro\" trước khi chọn \"Không chấp nhận.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý rủi ro\"; chọn phương án lệch nhóm \"Không chấp nhận.\"."},{"id":121,"question":"Chọn yếu tố không phải là nguồn gốc của rủi ro trong các dự án phần mềm:","correct":"Sự hiểu biết về kỹ thuật của người dùng","wrongs":["Khó khăn về kỹ thuật.","Thay đổi về phạm vi.","Ngân sách thực hiện dự án."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Câu hỏi có tín hiệu phủ định \"không phải\". Đọc kỹ từ khóa \"không phải là; rủi ro; dự án phần mềm\" trước khi chọn \"Sự hiểu biết về kỹ thuật của người dùng\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý rủi ro\"; chọn phương án lệch nhóm \"Sự hiểu biết về kỹ thuật của người dùng\"."},{"id":122,"question":"Yếu tố nào sau đây không mang đến các rủi ro về kỹ thuật đối với dự án phần mềm?","correct":"Sự hiểu biết về kỹ thuật.","wrongs":["Kích thước của phần mềm.","Sự phức tạp của phần mềm.","Sử dụng công nghệ mới."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Câu hỏi có tín hiệu phủ định \"không mang đến\". Đọc kỹ từ khóa \"không mang đến; rủi ro; dự án phần mềm\" trước khi chọn \"Sự hiểu biết về kỹ thuật.\".","distinguish":"Đây là câu phủ định: loại các phương án vẫn đúng với chủ đề \"Quản lý rủi ro\"; chọn phương án lệch nhóm \"Sự hiểu biết về kỹ thuật.\"."},{"id":123,"question":"Các rủi ro được sắp xếp theo yếu tố nào sau đây?","correct":"Xác suất xảy ra và mức độ tác động.","wrongs":["Mức độ tác động và kinh phí ứng phó.","Xác suất xảy ra và kinh phí ứng phó.","Mức độ tác động và kế hoạch ứng phó."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Xác suất xảy ra và mức độ tác động.\".","distinguish":"Loại phương án đảo thứ tự; giữ nguyên trình tự \"Xác suất xảy ra và mức độ tác động.\"."},{"id":124,"question":"Nhân tố nào sau đây là rủi ro về nhân sự?","correct":"Thành viên rời bỏ nhóm dự án.","wrongs":["Thu nhận nhân sự.","Phát triển đội dự án.","Hoạch định nhân sự."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Thành viên rời bỏ nhóm dự án.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":125,"question":"Xếp loại rủi ro cho tình huống: tổ chức có thể không đủ khả năng về kinh phí để thực hiện dự án phần mềm","correct":"Rủi ro về tài chính.","wrongs":["Rủi ro về kỹ thuật.","Rủi ro về thị trường.","Rủi ro về con người."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Rủi ro về tài chính.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":126,"question":"Đánh giá rủi ro và giám sát quá trình thực hiện dự án sẽ luôn song hành để:","correct":"Xác định lại các rủi ro cần quản lý.","wrongs":["Tiết kiệm kinh phí quản lý rủi ro.","Tránh các rủi ro.","Giảm thiểu tác động của các rủi ro."],"explanation":"<strong>Bản chất:</strong> Quản lý rủi ro gồm 3 bước cốt lõi: Nhận diện rủi ro $\\rightarrow$ Phân tích (định tính/định lượng mức độ tác động & xác suất) $\\rightarrow$ Lập kế hoạch ứng phó (Né tránh, Chuyển giao, Giảm thiểu, Chấp nhận).<br><strong>Chi tiết kỹ thuật:</strong> Rủi ro ưu tiên xử lý là những rủi ro có xác suất xảy ra cao và mức độ tổn thất nghiêm trọng.","tip":"Từ khóa nhận diện: \"Xác định lại các rủi ro cần quản lý.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":127,"question":"Chức năng nào chú trọng nâng cao năng lực của đội dự án và đảm bảo cho các thành viên trong đội có các kỹ năng cần thiết?","correct":"Phát triển.","wrongs":["Quản lý đội.","Hoạch định.","Thu nhận."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Phát triển.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"nâng; dự án; bảo\".","tip":"Từ khóa nhận diện: \"Phát triển.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":128,"question":"Những nguồn lực cơ bản cần hoạch định ngân sách là:","correct":"Vật lực và nguồn nhân lực.","wrongs":["Chiến lược quảng cáo.","Nguyên vật liệu, nhiên liệu, và thiết bị.","Nguyên vật liệu và nguồn nhân lực."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Vật lực và nguồn nhân lực.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"nguồn lực cơ bản; hoạch định ngân sách\".","tip":"Từ khóa nhận diện: \"Vật lực và nguồn nhân lực.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":129,"question":"Chọn thứ tự đúng cho các bước trong quản lý nhân lực dự án:","correct":"Hoạch định, thu nhận, phát triển và quản lý đội dự án.","wrongs":["Thu nhận, hoạch định, quản lý và phát triển đội dự án.","Hoạch định, thu nhận, quản lý và phát triển đội dự án.","Thu nhận, hoạch định, phát triển và quản lý đội dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoạch định, thu nhận, phát triển và quản lý đội dự án.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chọn thứ tự đúng; nhân lực\".","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; nhân lực\", nhớ nguyên chuỗi đáp án \"Hoạch định, thu nhận, phát triển và quản lý đội dự án.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Hoạch định\" và mốc cuối \"phát triển và quản lý đội dự án\"."},{"id":130,"question":"Phát biểu đúng về quản lý nguồn nhân lực:","correct":"Là tất cả các hoạt động của một tổ chức để thu hút, xây dựng, phát triển, sử dụng, đánh giá, bảo toàn và giữ gìn một lực lượng lao động phù hợp với yêu cầu công việc","wrongs":["Là nghệ thuật lãnh đạo, nghệ thuật chỉ huy, nghệ thuật làm việc với con người","Là việc tuyển mộ, tuyển chọn, duy trì, phát triển, sử dụng, động viên và cung cấp tiện nghi cho nhân lực","Là hoạch định, tổ chức, chỉ huy và kiểm soát các hoạt động nhằm thu hút, sử dụng và phát triển con người để có thể đạt được các mục tiêu của tổ chức."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Là tất cả các hoạt động của một tổ chức để thu hút, xây dựng, phát triển, sử dụng, đánh giá, bảo toàn và giữ gìn một lực lượng lao động phù hợp với yêu cầu công việc</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Phát biểu đúng; quản lý nguồn nhân lực\".","tip":"Từ khóa nhận diện: \"Là tất cả các hoạt động của một tổ chức để thu hút, xây dựng, phát triển, sử dụng, đánh giá, bảo toàn và giữ gìn một lực lượng lao động phù hợp với yêu cầu công việc\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":131,"question":"Đối tượng của quản lý nguồn nhân lực là:","correct":"Người lao động trong tổ chức và các vấn đề liên quan đến họ.","wrongs":["Người lao động trong tổ chức","Chỉ bao gồm những người lãnh đạo cấp cao trong tổ chức","Chỉ bao gồm những nhân viên cấp dưới."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Người lao động trong tổ chức và các vấn đề liên quan đến họ.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"quản lý nguồn nhân lực\".","tip":"Từ khóa nhận diện: \"Người lao động trong tổ chức và các vấn đề liên quan đến họ.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":132,"question":"Kích thích và động viên nhân viên thuộc về nhóm chức năng nào của quản lý nguồn nhân lực?","correct":"Quản lý.","wrongs":["Phát triển.","Hoạch định.","Thu nhận."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Quản lý.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Kích; thích; quản lý nguồn nhân lực\".","tip":"Từ khóa nhận diện: \"Quản lý.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":133,"question":"Các hoạt động như phỏng vấn và trắc nghiệm trong quá trình tuyển dụng nhân viên thuộc chức năng nào của quản lý nguồn nhân lực?","correct":"Thu nhận.","wrongs":["Phát triển.","Hoạch định.","Tuyển dụng."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Thu nhận.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":134,"question":"Chọn thứ tự đúng của quy trình quản lý nhân sự:","correct":"Hoạch định, thu nhận, phát triển kỹ năng và quản lý đội.","wrongs":["Thu nhận, hoạch định, phát triển kỹ năng và quản lý đội.","Phát triển kỹ năng, hoạch định, thu nhận và quản lý đội.","Quản lý đội, hoạch định, thu nhận và phát triển kỹ năng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoạch định, thu nhận, phát triển kỹ năng và quản lý đội.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Chọn thứ tự đúng; quản lý nhân sự\".","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; quản lý nhân sự\", nhớ nguyên chuỗi đáp án \"Hoạch định, thu nhận, phát triển kỹ năng và quản lý đội.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Hoạch định\" và mốc cuối \"phát triển kỹ năng và quản lý đội\"."},{"id":135,"question":"Quy trình quản lý nhân sự dự án là:","correct":"Hoạch định tài nguyên nhân sự, thu nhận nhân viên và quản lý đội dự án và phát triển kỹ năng","wrongs":["Hoạch định tài nguyên nhân sự, thu nhận nhân viên và quản lý đội dự án.","Hoạch định tài nguyên nhân sự và quản lý đội dự án.","Hoạch định, thu nhận nhân viên và quản lý đội dự án."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoạch định tài nguyên nhân sự, thu nhận nhân viên và quản lý đội dự án và phát triển kỹ năng</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"quản lý nhân sự dự án\".","tip":"Từ khóa nhận diện: \"Hoạch định tài nguyên nhân sự, thu nhận nhân viên và quản lý đội dự án và phát triển kỹ năng\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":136,"question":"Quản lý nhân sự dự án là:","correct":"Hoạch định, thu nhận, huấn luyện và sử dụng nhân viên và trả lương.","wrongs":["Hoạch định, thu nhận và kích thích nhân viên làm việc","Hoạch định, thu nhận và sử dụng nhân viên.","Hoạch định, thu nhận, huấn luyện và sử dụng nhân viên."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoạch định, thu nhận, huấn luyện và sử dụng nhân viên và trả lương.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"Quản lý nhân sự dự án\".","tip":"Từ khóa nhận diện: \"Hoạch định, thu nhận, huấn luyện và sử dụng nhân viên và trả lương.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":137,"question":"Trong tháp nhu cầu của Maslow, nhu cầu duy trì sự tồn tại tự nhiên của cơ thể là nhu cầu nào?","correct":"Nhu cầu sinh lý.","wrongs":["Nhu cầu được tôn trọng.","Nhu cầu sự tự hoàn thiện.","Nhu cầu an toàn."],"explanation":"<strong>Bản chất:</strong> Tháp nhu cầu Maslow gồm 5 tầng từ đáy lên đỉnh: 1. Sinh lý (ăn, mặc, ở) $\\rightarrow$ 2. An toàn $\\rightarrow$ 3. Xã hội/Giao tiếp $\\rightarrow$ 4. Được tôn trọng $\\rightarrow$ 5. Tự hoàn thiện/Khẳng định mình (đỉnh tháp).<br><strong>Chi tiết kỹ thuật:</strong> Con người phải được thỏa mãn các nhu cầu sinh học ở đáy tháp trước khi hướng tới các nhu cầu cao hơn.","tip":"Từ khóa nhận diện: \"Nhu cầu sinh lý.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":138,"question":"Trong tháp nhu cầu của Maslow, nhu cầu nằm ở đáy tháp là:","correct":"Nhu cầu sinh lý.","wrongs":["Nhu cầu an toàn.","Nhu cầu tự hoàn thiện.","Nhu cầu được tôn trọng."],"explanation":"<strong>Bản chất:</strong> Tháp nhu cầu Maslow gồm 5 tầng từ đáy lên đỉnh: 1. Sinh lý (ăn, mặc, ở) $\\rightarrow$ 2. An toàn $\\rightarrow$ 3. Xã hội/Giao tiếp $\\rightarrow$ 4. Được tôn trọng $\\rightarrow$ 5. Tự hoàn thiện/Khẳng định mình (đỉnh tháp).<br><strong>Chi tiết kỹ thuật:</strong> Con người phải được thỏa mãn các nhu cầu sinh học ở đáy tháp trước khi hướng tới các nhu cầu cao hơn.","tip":"Từ khóa nhận diện: \"Nhu cầu sinh lý.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":139,"question":"Trong tháp nhu cầu của Maslow, con người sẽ có những phản ứng lại đối với những dấu hiệu nguy hiểm từ đó họ sẽ phát sinh nhu cầu nào?","correct":"Nhu cầu an toàn.","wrongs":["Nhu cầu tự hoàn thiện.","Nhu cầu giao tiếp.","Nhu cầu được tôn trọng."],"explanation":"<strong>Bản chất:</strong> Tháp nhu cầu Maslow gồm 5 tầng từ đáy lên đỉnh: 1. Sinh lý (ăn, mặc, ở) $\\rightarrow$ 2. An toàn $\\rightarrow$ 3. Xã hội/Giao tiếp $\\rightarrow$ 4. Được tôn trọng $\\rightarrow$ 5. Tự hoàn thiện/Khẳng định mình (đỉnh tháp).<br><strong>Chi tiết kỹ thuật:</strong> Con người phải được thỏa mãn các nhu cầu sinh học ở đáy tháp trước khi hướng tới các nhu cầu cao hơn.","tip":"Từ khóa nhận diện: \"Nhu cầu an toàn.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":140,"question":"Trong tháp nhu cầu của Maslow, nhu cầu nằm đỉnh tháp là:","correct":"Nhu cầu tự hoàn thiện mình.","wrongs":["Nhu cầu được tôn trọng.","Nhu cầu an toàn.","Nhu cầu sinh lý."],"explanation":"<strong>Bản chất:</strong> Tháp nhu cầu Maslow gồm 5 tầng từ đáy lên đỉnh: 1. Sinh lý (ăn, mặc, ở) $\\rightarrow$ 2. An toàn $\\rightarrow$ 3. Xã hội/Giao tiếp $\\rightarrow$ 4. Được tôn trọng $\\rightarrow$ 5. Tự hoàn thiện/Khẳng định mình (đỉnh tháp).<br><strong>Chi tiết kỹ thuật:</strong> Con người phải được thỏa mãn các nhu cầu sinh học ở đáy tháp trước khi hướng tới các nhu cầu cao hơn.","tip":"Từ khóa nhận diện: \"Nhu cầu tự hoàn thiện mình.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":141,"question":"Kỹ thuật thu thập yêu cầu phần mềm nào có thể thu thập nhanh các thông tin và ít chi phí nhưng cần nhiều thời gian để chuẩn bị?","correct":"Họp nhóm.","wrongs":["Xem xét tài liệu.","Phỏng vấn.","Xem xét phần mềm hiện có."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Họp nhóm.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":142,"question":"Kỹ thuật thu thập yêu cầu phần mềm nào hiệu quả nhất nhưng cần rất nhiều thời gian để thực hiện?","correct":"Phỏng vấn.","wrongs":["Họp nhóm.","Ấn định công việc tạm thời.","Xem xét phần mềm hiện có."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Phỏng vấn.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":143,"question":"Chọn thứ tự đúng các bước thu thập yêu cầu phần mềm:","correct":"Thu thập yêu cầu, phân tích yêu cầu, đặc tả yêu cầu, đánh giá yêu cầu.","wrongs":["Thu thập yêu cầu, đánh giá yêu cầu, phân tích yêu cầu, đặc tả yêu cầu.","Thu thập yêu cầu, phân tích yêu cầu, đánh giá yêu cầu, đặc tả yêu cầu.","Thu thập yêu cầu, đặc tả yêu cầu, phân tích yêu cầu, đánh giá yêu cầu."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Gặp câu hỏi thứ tự với \"Chọn thứ tự đúng; thu thập yêu cầu phần mềm\", nhớ nguyên chuỗi đáp án \"Thu thập yêu cầu, phân tích yêu cầu, đặc tả yêu cầu, đánh giá yêu cầu.\".","distinguish":"Loại phương án đảo bước; kiểm tra mốc đầu \"Thu thập yêu cầu\" và mốc cuối \"đánh giá yêu cầu\"."},{"id":144,"question":"Khuyết điểm của kỹ thuật thu thập yêu cầu phần mềm thông qua xem xét phần mềm hiện có là:","correct":"Thông tin từ nhật ký có thể chưa cập nhật kịp thời.","wrongs":["Thông tin thu được từ nhật ký sẽ không khách quan.","Cần nhiều thời gian để thu thập thông tin từ nhật ký.","Cần nhiều chi phí để để thu thập thông tin từ nhật ký."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Thông tin từ nhật ký có thể chưa cập nhật kịp thời.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":145,"question":"Kỹ thuật thu thập yêu cầu phần mềm nào dễ thực hiện và thông tin thu thập được sẽ khách quan và chính xác?","correct":"Xem xét tài liệu.","wrongs":["Phỏng vấn.","Họp nhóm.","Xem xét phần mềm hiện có."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Xem xét tài liệu.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":146,"question":"Kỹ thuật ấn định công việc tạm thời được sử dụng để thu thập yêu cầu khi:","correct":"Những hoạt động cần thu thập chưa diễn ra hoặc là những tình huống ngoại lệ.","wrongs":["Thông tin thu thập không khách quan.","Thông tin thu thập không chính xác.","Cần nhiều thời gian và chi phí để thu thập thông tin."],"explanation":"<strong>Bản chất:</strong> Phỏng vấn trực tiếp (1-1) là cách thu thập yêu cầu sâu sắc và hiệu quả nhất vì tương tác trực tiếp, nhưng tốn nhiều thời gian và chi phí. Họp nhóm (Focus Group / JAD) giúp thu thập nhanh từ nhiều bên liên quan.<br><strong>Chi tiết kỹ thuật:</strong> Quy trình kỹ nghệ yêu cầu: Thu thập $\\rightarrow$ Phân tích $\\rightarrow$ Đặc tả $\\rightarrow$ Thẩm định/Đánh giá.","tip":"Từ khóa nhận diện: \"Những hoạt động cần thu thập chưa diễn ra hoặc là những tình huống ngoại lệ.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":147,"question":"Phát biểu nào sau đây là đặc trưng của phần mềm?","correct":"Phần mềm sẽ thoái hóa theo thời gian.","wrongs":["Phần mềm sẽ hư hỏng theo thời gian.","Phần mềm được phát triển theo đơn đặt hàng.","Phần mềm được chế tạo theo nghĩa cổ điển."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Phần mềm sẽ thoái hóa theo thời gian.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đặc trưng của phần mềm\".","tip":"Từ khóa nhận diện: \"Phần mềm sẽ thoái hóa theo thời gian.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":148,"question":"Chức năng nào chú trọng đến vấn đề đảm bảo đủ số lượng nhân viên với các phẩm chất phù hợp với công việc?","correct":"Hoạch định.","wrongs":["Quản lý đội.","Thu nhận.","Phát triển."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Hoạch định.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"phẩm; chất; phù\".","tip":"Từ khóa nhận diện: \"Hoạch định.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":149,"question":"Kế hoạch thực hiện dự án cung cấp …….. cho việc xác định và kiểm soát những thay đổi.","correct":"đường cơ sở.","wrongs":["kỹ thuật.","quy trình.","hướng dẫn."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>đường cơ sở.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"thực hiện; cung; cấp\".","tip":"Từ khóa nhận diện: \"đường cơ sở.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."},{"id":150,"question":"Khi nào đề xuất thay đổi của các bên liên quan được thực hiện?","correct":"Khi được phê duyệt.","wrongs":["Khi đề xuất là của người quản lý dự án.","Khi đề xuất là của đội dự án.","Khi đề xuất là của khách hàng."],"explanation":"<strong>Bản chất:</strong> Đáp án chính xác là <strong>Khi được phê duyệt.</strong> theo đúng nguyên lý và tiêu chuẩn Quản lý dự án phần mềm.<br><strong>Chi tiết kỹ thuật:</strong> Nội dung gắn liền với khái niệm \"đề xuất thay đổi; thực hiện\".","tip":"Từ khóa nhận diện: \"Khi được phê duyệt.\".","distinguish":"Điểm phân biệt: thay đổi trọng tâm này."}];
+
+    const STORAGE_KEY_ANSWERS = 'quiz_pm_answers';
+    const STORAGE_KEY_INDEX = 'quiz_pm_current_index';
+    const STORAGE_KEY_SHUFFLE = 'quiz_pm_shuffle_enabled';
+    const STORAGE_KEY_THEME = 'quiz_pm_theme_mode';
+
+    const LETTERS = ['A', 'B', 'C', 'D'];
+
+    // Seeded shuffle function to keep stable option order per question unless shuffle button toggled
+    function seededShuffle(arr, seed) {
+      let s = seed % 2147483647;
+      if (s <= 0) s += 2147483646;
+      const rnd = function() {
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
+      };
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // App State
+    let currentIndex = 0;
+    let userAnswers = {}; // { [questionId]: optionIndex }
+    let shuffleSeedOffset = 0;
+    let isShuffleMode = false;
+    let activeFilter = 'all'; // 'all' | 'unanswered' | 'correct' | 'wrong'
+    let currentTheme = 'dark'; // 'dark' | 'light'
+
+    // Load from LocalStorage
+    try {
+      const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+      if (savedAnswers) userAnswers = JSON.parse(savedAnswers);
+      const savedIndex = localStorage.getItem(STORAGE_KEY_INDEX);
+      if (savedIndex !== null) currentIndex = parseInt(savedIndex, 10) || 0;
+      if (currentIndex < 0 || currentIndex >= RAW_QUESTIONS.length) currentIndex = 0;
+      isShuffleMode = localStorage.getItem(STORAGE_KEY_SHUFFLE) === 'true';
+
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        currentTheme = savedTheme;
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        currentTheme = 'light';
+      }
+    } catch(e) {
+      console.warn('LocalStorage error:', e);
+    }
+
+    // DOM Elements
+    const htmlElement = document.documentElement;
+    const btnThemeToggle = document.getElementById('btn-theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+
+    const qIndexText = document.getElementById('q-index-text');
+    const qText = document.getElementById('q-text');
+    const optionsContainer = document.getElementById('options-container');
+    const explanationContainer = document.getElementById('explanation-container');
+    const statusBanner = document.getElementById('status-banner');
+    const explainTechText = document.getElementById('explain-tech-text');
+    const explainTipText = document.getElementById('explain-tip-text');
+    const explainDistinguishText = document.getElementById('explain-distinguish-text');
+    const blockTip = document.getElementById('block-tip');
+    const blockDistinguish = document.getElementById('block-distinguish');
+
+    const valCorrect = document.getElementById('val-correct');
+    const valAnswered = document.getElementById('val-answered');
+    const valWrong = document.getElementById('val-wrong');
+    const valPercentage = document.getElementById('val-percentage');
+    const progressBar = document.getElementById('progress-bar');
+    const chipsContainer = document.getElementById('chips-container');
+
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnResetCurrent = document.getElementById('btn-reset-current');
+    const btnResetAll = document.getElementById('btn-reset-all');
+    const btnShuffle = document.getElementById('btn-shuffle');
+
+    const resetModal = document.getElementById('reset-modal');
+    const btnModalCancel = document.getElementById('btn-modal-cancel');
+    const btnModalConfirm = document.getElementById('btn-modal-confirm');
+
+    // Theme Management
+    function applyTheme(theme) {
+      currentTheme = theme;
+      htmlElement.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem(STORAGE_KEY_THEME, theme);
+      } catch(e) {}
+
+      if (theme === 'light') {
+        themeText.textContent = 'Tối';
+        themeIcon.setAttribute('data-lucide', 'moon');
+      } else {
+        themeText.textContent = 'Sáng';
+        themeIcon.setAttribute('data-lucide', 'sun');
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    btnThemeToggle.addEventListener('click', () => {
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+
+    // Build question options list
+    function getQuestionOptions(q) {
+      const baseList = [
+        { text: q.correct, isCorrect: true },
+        ...q.wrongs.map(w => ({ text: w, isCorrect: false }))
+      ];
+      if (isShuffleMode) {
+        return seededShuffle(baseList, (q.id * 41 + 17 + shuffleSeedOffset));
+      } else {
+        return seededShuffle(baseList, (q.id * 37 + 11));
+      }
+    }
+
+    // Render Stats
+    function updateStats() {
+      const total = RAW_QUESTIONS.length;
+      let correctCount = 0;
+      let wrongCount = 0;
+      let answeredCount = 0;
+
+      RAW_QUESTIONS.forEach(q => {
+        const pickedIdx = userAnswers[q.id];
+        if (pickedIdx !== undefined) {
+          answeredCount++;
+          const opts = getQuestionOptions(q);
+          if (opts[pickedIdx] && opts[pickedIdx].isCorrect) {
+            correctCount++;
+          } else {
+            wrongCount++;
+          }
+        }
+      });
+
+      valCorrect.textContent = correctCount;
+      valAnswered.textContent = answeredCount;
+      valWrong.textContent = wrongCount;
+
+      const pct = answeredCount > 0 ? Math.round((correctCount / total) * 100) : 0;
+      valPercentage.textContent = pct + '%';
+      progressBar.style.width = ((answeredCount / total) * 100) + '%';
+
+      // Save to localStorage
+      try {
+        localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(userAnswers));
+        localStorage.setItem(STORAGE_KEY_INDEX, currentIndex.toString());
+      } catch(e) {}
+    }
+
+    // Render Palette Chips
+    function renderPalette() {
+      chipsContainer.innerHTML = '';
+      RAW_QUESTIONS.forEach((q, idx) => {
+        const picked = userAnswers[q.id];
+        const isAnswered = picked !== undefined;
+        let isCorrect = false;
+        if (isAnswered) {
+          const opts = getQuestionOptions(q);
+          isCorrect = opts[picked] && opts[picked].isCorrect;
+        }
+
+        // Apply filters
+        let visible = true;
+        if (activeFilter === 'unanswered' && isAnswered) visible = false;
+        if (activeFilter === 'correct' && (!isAnswered || !isCorrect)) visible = false;
+        if (activeFilter === 'wrong' && (!isAnswered || isCorrect)) visible = false;
+
+        const chip = document.createElement('button');
+        chip.className = 'q-chip';
+        chip.textContent = q.id;
+        chip.setAttribute('title', 'Câu ' + q.id);
+
+        if (idx === currentIndex) chip.classList.add('active');
+        if (isAnswered) {
+          if (isCorrect) chip.classList.add('correct');
+          else chip.classList.add('wrong');
+        }
+
+        if (!visible) {
+          chip.style.display = 'none';
+        }
+
+        chip.addEventListener('click', () => {
+          goToQuestion(idx);
+        });
+
+        chipsContainer.appendChild(chip);
+      });
+    }
+
+    // Render Current Question
+    function renderCurrentQuestion() {
+      const q = RAW_QUESTIONS[currentIndex];
+      const options = getQuestionOptions(q);
+      const pickedIdx = userAnswers[q.id];
+      const isAnswered = pickedIdx !== undefined;
+
+      qIndexText.textContent = 'Câu ' + q.id + ' / ' + RAW_QUESTIONS.length;
+      qText.textContent = q.question;
+
+      // Render Options
+      optionsContainer.innerHTML = '';
+      options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.disabled = isAnswered;
+
+        const isUserPick = pickedIdx === idx;
+
+        if (isAnswered) {
+          if (opt.isCorrect) {
+            btn.classList.add('state-correct');
+          } else if (isUserPick && !opt.isCorrect) {
+            btn.classList.add('state-wrong');
+          } else {
+            btn.classList.add('state-dim');
+          }
+        }
+
+        const letterBox = document.createElement('div');
+        letterBox.className = 'option-letter';
+        letterBox.textContent = LETTERS[idx] || (idx + 1);
+
+        const textSpan = document.createElement('div');
+        textSpan.className = 'option-text';
+        textSpan.textContent = opt.text;
+
+        const iconBox = document.createElement('div');
+        iconBox.className = 'option-icon';
+        if (isAnswered && opt.isCorrect) {
+          iconBox.innerHTML = '<i data-lucide="check" style="width:16px; height:16px; color: var(--color-success);"></i>';
+        } else if (isAnswered && isUserPick && !opt.isCorrect) {
+          iconBox.innerHTML = '<i data-lucide="x" style="width:16px; height:16px; color: var(--color-danger);"></i>';
+        }
+
+        btn.appendChild(letterBox);
+        btn.appendChild(textSpan);
+        btn.appendChild(iconBox);
+
+        btn.addEventListener('click', () => {
+          if (userAnswers[q.id] === undefined) {
+            userAnswers[q.id] = idx;
+            updateStats();
+            renderCurrentQuestion();
+            renderPalette();
+          }
+        });
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Render Explanation
+      if (isAnswered) {
+        const isCorrect = options[pickedIdx] && options[pickedIdx].isCorrect;
+        explanationContainer.style.display = 'flex';
+
+        statusBanner.className = 'status-banner ' + (isCorrect ? 'is-correct' : 'is-wrong');
+        statusBanner.innerHTML = isCorrect
+          ? '<i data-lucide="check-circle-2" style="width:16px; height:16px;"></i> <span>Chính xác! Làm rất tốt.</span>'
+          : '<i data-lucide="alert-circle" style="width:16px; height:16px;"></i> <span>Chưa chính xác. Xem kỹ lời giải dưới đây.</span>';
+
+        explainTechText.innerHTML = q.explanation;
+
+        if (q.tip) {
+          blockTip.style.display = 'flex';
+          explainTipText.textContent = q.tip;
+        } else {
+          blockTip.style.display = 'none';
+        }
+
+        if (q.distinguish) {
+          blockDistinguish.style.display = 'flex';
+          explainDistinguishText.textContent = q.distinguish;
+        } else {
+          blockDistinguish.style.display = 'none';
+        }
+      } else {
+        explanationContainer.style.display = 'none';
+      }
+
+      // Update Nav Buttons
+      btnPrev.disabled = currentIndex === 0;
+      btnNext.disabled = currentIndex === RAW_QUESTIONS.length - 1;
+
+      // Scroll active chip into view inside palette
+      const activeChip = chipsContainer.children[currentIndex];
+      if (activeChip) {
+        activeChip.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+      }
+
+      // Re-initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    function goToQuestion(index) {
+      if (index >= 0 && index < RAW_QUESTIONS.length) {
+        currentIndex = index;
+        renderCurrentQuestion();
+        renderPalette();
+      }
+    }
+
+    // Event Listeners
+    btnPrev.addEventListener('click', () => goToQuestion(currentIndex - 1));
+    btnNext.addEventListener('click', () => goToQuestion(currentIndex + 1));
+
+    btnResetCurrent.addEventListener('click', () => {
+      const q = RAW_QUESTIONS[currentIndex];
+      delete userAnswers[q.id];
+      updateStats();
+      renderCurrentQuestion();
+      renderPalette();
+    });
+
+    btnResetAll.addEventListener('click', () => {
+      resetModal.classList.add('open');
+    });
+
+    btnModalCancel.addEventListener('click', () => {
+      resetModal.classList.remove('open');
+    });
+
+    btnModalConfirm.addEventListener('click', () => {
+      userAnswers = {};
+      currentIndex = 0;
+      updateStats();
+      renderCurrentQuestion();
+      renderPalette();
+      resetModal.classList.remove('open');
+    });
+
+    btnShuffle.addEventListener('click', () => {
+      isShuffleMode = !isShuffleMode;
+      shuffleSeedOffset = Math.floor(Math.random() * 1000) + 1;
+      localStorage.setItem(STORAGE_KEY_SHUFFLE, isShuffleMode.toString());
+      if (isShuffleMode) {
+        btnShuffle.classList.add('btn-brand');
+        btnShuffle.querySelector('span').textContent = 'Đang xáo';
+      } else {
+        btnShuffle.classList.remove('btn-brand');
+        btnShuffle.querySelector('span').textContent = 'Xáo đáp án';
+      }
+      renderCurrentQuestion();
+      renderPalette();
+    });
+
+    // Palette filter buttons
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.getAttribute('data-filter');
+        renderPalette();
+      });
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (resetModal.classList.contains('open')) {
+        if (e.key === 'Escape') resetModal.classList.remove('open');
+        return;
+      }
+
+      // Ignore when user is pressing shortcut combinations like Ctrl+C, Ctrl+A, Cmd+C...
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      const key = e.key.toUpperCase();
+      const q = RAW_QUESTIONS[currentIndex];
+
+      // Options A, B, C, D or 1, 2, 3, 4
+      let optIdx = -1;
+      if (key === 'A' || key === '1') optIdx = 0;
+      else if (key === 'B' || key === '2') optIdx = 1;
+      else if (key === 'C' || key === '3') optIdx = 2;
+      else if (key === 'D' || key === '4') optIdx = 3;
+
+      if (optIdx !== -1 && userAnswers[q.id] === undefined) {
+        userAnswers[q.id] = optIdx;
+        updateStats();
+        renderCurrentQuestion();
+        renderPalette();
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        goToQuestion(currentIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        goToQuestion(currentIndex + 1);
+      } else if (key === 'R') {
+        delete userAnswers[q.id];
+        updateStats();
+        renderCurrentQuestion();
+        renderPalette();
+      }
+    });
+
+    // Initialize
+    applyTheme(currentTheme);
+    if (isShuffleMode) {
+      btnShuffle.classList.add('btn-brand');
+      btnShuffle.querySelector('span').textContent = 'Đang xáo';
+    }
+    updateStats();
+    renderCurrentQuestion();
+    renderPalette();
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vibe-trading-backend
+    runtime: python
+    buildCommand: "pip install -e . && pip install -r agent/requirements.txt"
+    startCommand: "python agent/api_server.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: PYTHONPATH
+        value: ./agent
+      - key: VIBE_TRADING_PORT
+        value: 10000
+      - key: VIBE_TRADING_HOST
+        value: 0.0.0.0
+      - key: LANGCHAIN_PROVIDER
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"

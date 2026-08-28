@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strategy_discipline id="TREND_SWING">
+  <name>Multi-TP Theo Xu Hu?ng (Trend Swing)</name>
+  <objective>Khai th�c t?i da bi�n d? s�ng l?n theo khung th?i gian 1H v� b?o v? l?i nhu?n t?ng ph?n.</objective>
+  <risk_matrix>
+    <hard_stop_loss_roi>-15.0%</hard_stop_loss_roi>
+    <tp1_target_r>1.5R</tp1_target_r>
+    <tp2_target_r>2.6R</tp2_target_r>
+    <tp3_target_r>4.2R</tp3_target_r>
+  </risk_matrix>
+  <execution_instructions>
+    <directive>Khi ch?m TP1, k�ch ho?t l?nh d?i Stop Loss v? gi� h�a v?n Entry (Break-even Guard).</directive>
+    <directive>Khi xu?t hi?n n?n Pinbar d?o chi?u ki?t s?c ? v�ng qu� mua RSI > 78, ch? d?nh PARTIAL_TP ho?c EMERGENCY_CLOSE.</directive>
+  </execution_instructions>
+</strategy_discipline>

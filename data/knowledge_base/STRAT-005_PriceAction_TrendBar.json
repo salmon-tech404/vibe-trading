@@ -1,0 +1,65 @@
+﻿{
+  "id": "STRAT-005",
+  "name": "Price Action Strong Trend Bar & Micro Double Bottom (MDB)",
+  "category": "Trend Following",
+  "metadata": {
+    "source_book": "Trading Price Action Trends",
+    "author": "Al Brooks",
+    "primary_timeframe": "5m / 15m",
+    "market_regime": "Xu hướng tăng/giảm mạnh mẽ (Always In Long / Always In Short)"
+  },
+  "core_hypothesis": "Các thanh nến có thân nến lớn chiếm hơn 70% toàn bộ chiều dài nến (Trend Bar) thể hiện sự kiểm soát tuyệt đối của dòng tiền tổ chức. Khi xuất hiện mô hình 2 đáy vi mô (Micro Double Bottom) kiểm tra lại đường EMA(20), phe bán cạn kiệt lực ép và bên mua sẽ tái kích hoạt đà đẩy giá tiếp diễn.",
+  "mathematical_indicators": [
+    {
+      "name": "EMA20",
+      "formula": "EMA(Close, 20)",
+      "default_params": "period=20"
+    },
+    {
+      "name": "TrendBarRatio",
+      "formula": "|Close - Open| / (High - Low)",
+      "default_params": "threshold >= 0.70"
+    },
+    {
+      "name": "RelativeVolume",
+      "formula": "Volume / SMA(Volume, 20)",
+      "default_params": "threshold >= 1.6"
+    },
+    {
+      "name": "ATR",
+      "formula": "EMA(TrueRange, 14)",
+      "default_params": "period=14"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Thị trường đang nằm trên EMA(20) liên tục ít nhất 10 nến.",
+        "Mô hình Micro Double Bottom hình thành tại dải EMA(20): Đáy 2 không thấp hơn Đáy 1 quá 0.3 * ATR(14).",
+        "Thanh nến tín hiệu (Signal Bar) là nến Bullish Trend Bar đóng cửa ở 20% biên trên của nến kèm RelativeVolume >= 1.6."
+      ],
+      "execution_type": "BUY STOP đặt tại High(Signal Bar) + 1 Tick."
+    },
+    "risk_management": {
+      "stop_loss_formula": "Min(Low(Đáy 1), Low(Đáy 2)) - 0.2 * ATR(14)",
+      "max_risk_per_trade_pct": 1.0,
+      "circuit_breaker_condition": "Nến tiếp theo sau khi khớp lệnh đóng cửa là một Bearish Trend Bar ngược hướng hoàn toàn."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "TP1", "ratio": "2.0R", "close_ratio": "60%" },
+        { "level": "TP2", "ratio": "3.5R", "close_ratio": "40%" }
+      ],
+      "trailing_stop_rule": "Trailing Stop Loss theo đáy của từng thanh Bullish Trend Bar liên tiếp.",
+      "time_based_stop": "Đóng vị thế nếu sau 8 nến giá không bứt phá tạo đỉnh mới."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Nến breakout giả ngay tại đỉnh cũ rồi quay đầu",
+      "diagnosis": "Bẫy tăng giá (Bull Trap) tại vùng kháng cự lớn khung HTF",
+      "corrective_action": "Kiểm tra cự ly đến đỉnh cũ HTF; nếu cự ly < 1.5R thì từ chối vào lệnh."
+    }
+  ]
+}

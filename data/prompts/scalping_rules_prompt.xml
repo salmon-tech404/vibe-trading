@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strategy_discipline id="SCALPING">
+  <name>Scalping Lu?t S�ng Si�u T?c</name>
+  <objective>B?o to�n v?n t?i da, ch?t l?i d?t kho�t 1.0x ATR v� xoay v�ng margin nhanh.</objective>
+  <risk_matrix>
+    <max_risk_per_trade_pct>2.0%</max_risk_per_trade_pct>
+    <hard_stop_loss_roi>-8.0%</hard_stop_loss_roi>
+    <time_stop_limit_minutes>25</time_stop_limit_minutes>
+  </risk_matrix>
+  <execution_instructions>
+    <directive>Khi l?nh �m qu� -6% ho?c n?n d?o chi?u ngu?c hu?ng, l?p t?c ch? d?nh h�nh d?ng EMERGENCY_CLOSE m� kh�ng do d?.</directive>
+    <directive>Khi l?nh di ngang qu� 20 ph�t kh�ng t?o d?nh/d�y m?i, ch? d?nh TIMEOUT_CLOSE.</directive>
+  </execution_instructions>
+</strategy_discipline>

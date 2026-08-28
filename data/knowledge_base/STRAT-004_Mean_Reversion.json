@@ -1,0 +1,80 @@
+﻿{
+  "id": "STRAT-004",
+  "name": "Bollinger Bands & RSI Overextension Mean Reversion",
+  "category": "Mean Reversion",
+  "metadata": {
+    "source_book": "Quantitative Trading, 2nd Edition",
+    "author": "Ernie Chan",
+    "primary_timeframe": "5m / 15m",
+    "market_regime": "Thị trường đi ngang tích lũy / Dao động trong hộp giá (Kaufman ER < 0.35)"
+  },
+  "core_hypothesis": "Trong các phiên thị trường thiếu vắng tin tức hoặc trong giai đoạn tích lũy đi ngang (ER thấp), chuỗi giá tài chính tuân theo quy luật dừng Ornstein-Uhlenbeck (Mean-Reverting). Khi giá dãn biên ra ngoài 2 độ lệch chuẩn của dải Bollinger Band kết hợp RSI cực đoan, xác suất hồi quy về giá trị trung bình (Trung trục SMA20) lên đến trên 75%.",
+  "mathematical_indicators": [
+    {
+      "name": "SMA20",
+      "formula": "SMA(Close, 20)",
+      "default_params": "period=20"
+    },
+    {
+      "name": "UpperBand",
+      "formula": "SMA20 + 2.0 * StDev(Close, 20)",
+      "default_params": "multiplier=2.0"
+    },
+    {
+      "name": "LowerBand",
+      "formula": "SMA20 - 2.0 * StDev(Close, 20)",
+      "default_params": "multiplier=2.0"
+    },
+    {
+      "name": "PercentB",
+      "formula": "(Close - LowerBand) / (UpperBand - LowerBand)",
+      "default_params": "Range: [0.0, 1.0]"
+    },
+    {
+      "name": "RSI",
+      "formula": "RSI(Close, 14)",
+      "default_params": "period=14"
+    },
+    {
+      "name": "KaufmanER",
+      "formula": "EfficiencyRatio(10)",
+      "default_params": "threshold < 0.35"
+    },
+    {
+      "name": "ATR",
+      "formula": "EMA(TrueRange, 14)",
+      "default_params": "period=14"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Bộ lọc trạng thái thị trường: Kaufman ER(10) < 0.35 (BẮT BUỘC để tránh bắt đỉnh/đáy trong pha Trend mạnh).",
+        "Điều kiện quá bán: Giá đóng cửa dưới dải LowerBand (PercentB < 0.0) VÀ RSI(14) < 28.",
+        "Tín hiệu kích hoạt: Xuất hiện nến đảo chiều đóng cửa quay trở lại bên trong dải LowerBand (PercentB > 0.05)."
+      ],
+      "execution_type": "MARKET ngay khi nến xác nhận đóng cửa."
+    },
+    "risk_management": {
+      "stop_loss_formula": "Lowest(Low, 5) - 0.5 * ATR(14)",
+      "max_risk_per_trade_pct": 1.0,
+      "circuit_breaker_condition": "Giá tiếp tục giảm thủng LowerBand quá 1.5 * ATR(14) hoặc mức lỗ ROI vượt quá -15% vốn ký quỹ -> Cắt bỏ ngay lập tức."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "TP1", "ratio": "Chạm trung trục SMA(20)", "close_ratio": "70%" },
+        { "level": "TP2", "ratio": "Chạm dải đối diện UpperBand", "close_ratio": "30%" }
+      ],
+      "trailing_stop_rule": "Dời Stop Loss về hòa vốn khi giá chạm 50% quãng đường đến đường SMA(20).",
+      "time_based_stop": "Đóng vị thế sau tối đa 10 nến nếu giá chưa chạm được SMA(20)."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Vào lệnh bắt đáy nhưng giá bám dải dưới (Band Walking) và giảm sâu liên tục",
+      "diagnosis": "Thị trường đã bùng nổ Breakout chuyển sang pha xu hướng giảm mạnh mà ER bị trễ chưa nhận diện kịp",
+      "corrective_action": "Kiểm tra thêm độ rộng dải Bollinger Bandwidth; nếu Bandwidth đang dãn rộng đột biến > 2.0x thì cấm tuyệt đối lệnh Mean Reversion."
+    }
+  ]
+}

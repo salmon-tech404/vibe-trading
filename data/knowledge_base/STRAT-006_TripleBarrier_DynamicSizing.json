@@ -1,0 +1,69 @@
+﻿{
+  "id": "STRAT-006",
+  "name": "Triple Barrier Method & Volatility-Adjusted Dynamic Sizing",
+  "category": "Machine Learning & Risk Management",
+  "metadata": {
+    "source_book": "Advances in Financial Machine Learning",
+    "author": "Marcos López de Prado",
+    "primary_timeframe": "Mọi khung thời gian (Dynamic Meta-Framework)",
+    "market_regime": "Quản trị rủi ro đa chế độ (Multi-Regime Execution Framework)"
+  },
+  "core_hypothesis": "Giao dịch tài chính không thể dựa trên các mốc chốt lời/cắt lỗ cố định theo điểm (fixed pips/dollars) do biến động thị trường (volatility) thay đổi liên tục theo thời gian. Bằng cách thiết lập 3 rào chắn động (Upper Horizontal Barrier, Lower Horizontal Barrier, Vertical Time Barrier) dựa trên độ biến động thực tế (Daily/Hourly Volatility Estimate), hệ thống chuẩn hóa được phân phối lợi nhuận và hạn chế tối đa rủi ro suy thoái vốn cục bộ.",
+  "mathematical_indicators": [
+    {
+      "name": "EWM_Volatility",
+      "formula": "Sqrt(EWM(Return^2, span=100))",
+      "default_params": "span=100"
+    },
+    {
+      "name": "UpperBarrier",
+      "formula": "EntryPrice * (1 + target_multiplier * EWM_Volatility)",
+      "default_params": "target_multiplier=2.0"
+    },
+    {
+      "name": "LowerBarrier",
+      "formula": "EntryPrice * (1 - stop_multiplier * EWM_Volatility)",
+      "default_params": "stop_multiplier=1.2"
+    },
+    {
+      "name": "VerticalBarrier",
+      "formula": "CurrentTimestamp + max_holding_bars * BarDuration",
+      "default_params": "max_bars=24"
+    },
+    {
+      "name": "PositionSizeCoins",
+      "formula": "(AccountEquity * RiskFraction) / (EntryPrice - LowerBarrier)",
+      "default_params": "RiskFraction=0.01"
+    }
+  ],
+  "rules": {
+    "entry_setup": {
+      "conditions": [
+        "Tín hiệu kỹ thuật từ một trong các chiến lược (KAMA, Liquidity Sweep, FVG) được xác nhận.",
+        "Độ biến động EWM_Volatility nằm trong khoảng cho phép [0.003, 0.045] (không giao dịch khi thị trường đóng băng hoặc biến động phi tuyến tính cực đoan).",
+        "Quy mô vị thế được tính toán động sao cho khoảng cách từ Entry đến LowerBarrier chỉ gây thiệt hại chính xác 1.0% tổng tài sản tài khoản."
+      ],
+      "execution_type": "MARKET với số lượng coin được làm tròn theo StepSize của sàn."
+    },
+    "risk_management": {
+      "stop_loss_formula": "LowerBarrier = EntryPrice * (1 - 1.2 * EWM_Volatility)",
+      "max_risk_per_trade_pct": 1.0,
+      "circuit_breaker_condition": "Tài khoản sụt giảm tổng vốn ngày (Daily Drawdown) vượt quá 4.0% -> Khóa toàn bộ quyền mở lệnh mới của bot trong 24 giờ."
+    },
+    "exit_strategy": {
+      "take_profit_targets": [
+        { "level": "UpperBarrier", "ratio": "2.0 * EWM_Volatility", "close_ratio": "100%" }
+      ],
+      "trailing_stop_rule": "Nâng LowerBarrier lên mức Entry khi giá đã đi được 50% khoảng cách đến UpperBarrier.",
+      "time_based_stop": "Khi chạm VerticalBarrier (hết 24 nến mà chưa chạm Upper hoặc Lower Barrier) -> Đóng toàn bộ vị thế tại giá thị trường để giải phóng vốn ký quỹ."
+    }
+  },
+  "post_mortem_heuristics": [
+    {
+      "failure_pattern_id": "F1",
+      "symptom": "Vị thế liên tục bị đóng tại VerticalBarrier với PnL quanh mức 0",
+      "diagnosis": "Chiến lược đang vào lệnh trong điều kiện thị trường cạn kiệt thanh khoản và động lượng",
+      "corrective_action": "Tăng hệ số lọc biến động tối thiểu EWM_Volatility trước khi cho phép mở lệnh."
+    }
+  ]
+}

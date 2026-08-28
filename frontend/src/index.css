@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Mode Surfaces (Clean SaaS workspace like velx-books) */
+    --background: 210 20% 98%;        /* #F8FAFC */
+    --foreground: 220 20% 12%;        /* #181A20 */
+    --card: 0 0% 100%;               /* #FFFFFF */
+    --card-foreground: 220 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+
+    /* Binance Gold Accent (Carefully tuned, not glaring) */
+    --primary: 48 93% 47%;           /* #F0B90B */
+    --primary-foreground: 220 20% 10%;
+
+    --muted: 220 14% 94%;            /* #F1F5F9 */
+    --muted-foreground: 220 10% 46%; /* #64748B */
+    --destructive: 352 85% 58%;      /* #F6465D */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 90%;           /* #E2E8F0 */
+    --radius: 0.75rem;
+
+    /* Semantic Trading Colors (Binance Standard) */
+    --success: 157 87% 40%;          /* #0ECB81 */
+    --danger: 352 85% 58%;           /* #F6465D */
+    --warning: 38 92% 50%;
+    --info: 217 91% 60%;
+
+    /* Chart tokens */
+    --chart-grid: 220 14% 92%;
+    --chart-text: 220 10% 50%;
+    --chart-axis: 220 14% 82%;
+    --chart-compare-a: #2563eb;
+    --chart-compare-b: #f59e0b;
+  }
+
+  .dark {
+    /* Dark Mode Surfaces (Binance Official Pro Terminal: #0B0E11 / #181A20) */
+    --background: 220 19% 6%;        /* #0B0E11 */
+    --foreground: 220 15% 93%;       /* #EAECEF */
+    --card: 225 14% 11%;             /* #181A20 */
+    --card-foreground: 220 15% 93%;
+
+    --popover: 225 15% 14%;          /* #1E2329 */
+    --popover-foreground: 220 15% 93%;
+
+    /* Binance Gold Accent */
+    --primary: 48 93% 49%;           /* #F0B90B */
+    --primary-foreground: 220 20% 8%; /* Deep text on gold button */
+
+    --muted: 220 15% 18%;            /* #242932 */
+    --muted-foreground: 220 10% 60%; /* #848E9C */
+    --destructive: 352 85% 58%;      /* #F6465D */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 19%;           /* #272C35 */
+
+    /* Semantic Trading Colors (Binance Standard) */
+    --success: 157 87% 42%;          /* #0ECB81 */
+    --danger: 352 85% 58%;           /* #F6465D */
+    --warning: 45 93% 47%;
+    --info: 217 91% 60%;
+
+    /* Chart tokens */
+    --chart-grid: 220 16% 12%;
+    --chart-text: 220 10% 50%;
+    --chart-axis: 220 14% 20%;
+    --chart-compare-a: #3b82f6;
+    --chart-compare-b: #f0b90b;
+  }
+
+  * {
+    @apply border-border/80;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  /* Smooth scrollbar for webkit */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+/* Animations */
+@keyframes pulse-slide {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(200%); }
+  100% { transform: translateX(-100%); }
+}
+
+.chat-scroll-container[data-streaming="true"] {
+  overflow-anchor: none;
+}
+
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
