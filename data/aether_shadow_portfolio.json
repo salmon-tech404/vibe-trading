@@ -1,0 +1,36 @@
+{
+  "account_summary": {
+    "symbol": "BTC-USD",
+    "initial_capital": 100000.0,
+    "current_equity": 100008.38874325274,
+    "cash": 74655.90405495488,
+    "position_units": 0.32537452835786035,
+    "total_trades": 1,
+    "current_drawdown_pct": 0.04432613294899897,
+    "last_update": "2026-08-29T00:30:12.365771"
+  },
+  "latest_snapshot": {
+    "timestamp": "2026-08-29T00:30:12.365250",
+    "symbol": "BTC-USD",
+    "current_price": 77917.85305460097,
+    "portfolio_equity": 100008.38874325274,
+    "cash_balance": 74655.90405495488,
+    "position_units": 0.32537452835786035,
+    "drawdown_pct": 0.04432613294899897,
+    "decision": "HOLD",
+    "circuit_breaker_status": "NORMAL",
+    "fill": null
+  },
+  "recent_trades": [
+    {
+      "timestamp": "2026-08-29T00:30:08.360888",
+      "symbol": "BTC-USD",
+      "side": "BUY",
+      "units": 0.32537452835786035,
+      "executed_price": 77872.60309694998,
+      "slippage_paid": 6.926266828371151,
+      "fee_paid": 6.334440376167239,
+      "conviction_size": 0.2533083523784059
+    }
+  ]
+}

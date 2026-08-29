@@ -229,7 +229,7 @@ def _iter_parsed_lines(lines: Iterable[str]) -> Iterator[tuple[int, dict[str, An
     verification.
     """
     for index, raw in enumerate(lines):
-        line = raw.strip()
+        line = raw.strip("\r\n \t\0")
         if not line:
             continue
         try:
@@ -450,7 +450,11 @@ def append_record(
             }
             line = (json.dumps(full_record, ensure_ascii=False) + "\n").encode("utf-8")
 
-            handle.seek(0, os.SEEK_END)
+            if last_seq == start_seq - 1:
+                handle.seek(0)
+                handle.truncate(0)
+            else:
+                handle.seek(0, os.SEEK_END)
             handle.write(line)
             handle.flush()
             if fsync:

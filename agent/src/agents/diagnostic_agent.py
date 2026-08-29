@@ -99,7 +99,7 @@ class DiagnosticAgent:
             volume_ratio = trade.get("volume_ratio") or 1.0
             session = trade.get("session", "")
 
-            if (action == "BUY" and trend_h4 == "DOWNTREND") or (action == "SELL" and trend_h4 == "UPTREND"):
+            if (action == "BUY" and trend_h4.lower() == "downtrend") or (action == "SELL" and trend_h4.lower() == "uptrend"):
                 counter_trend_count += 1
             if action == "BUY" and rsi > 70:
                 overbought_buy_count += 1
@@ -114,23 +114,23 @@ class DiagnosticAgent:
         pct_asia = (asian_session_count / total_losses) * 100
 
         report = [
-            f"🔬 **BÁO CÁO CHẨN ĐOÁN LỆNH THUA ({total_losses} LỆNH)**",
-            "─────────────────────────────────",
-            "**1. Phân loại Nguyên nhân cốt lõi (Root Cause):**",
-            f"• 📉 **Lỗi ngược Xu hướng Khung Lớn (H4 Trend):** {counter_trend_count}/{total_losses} lệnh ({pct_trend:.1f}%)",
-            f"  ↳ *Vào lệnh BUY khi H4 đang DOWNTREND hoặc SELL khi H4 đang UPTREND.*",
-            f"• ⚠️ **Lỗi Mua tại Vùng Quá Mua (RSI > 70):** {overbought_buy_count}/{total_losses} lệnh ({pct_rsi:.1f}%)",
-            f"  ↳ *Fomo mua đuổi tại đỉnh ngắn hạn dẫn đến bị quét Stop Loss.*",
-            f"• 🔕 **Lỗi Thị trường Đi ngang / Thanh khoản yếu:** {low_volume_count}/{total_losses} lệnh ({pct_vol:.1f}%)",
-            f"  ↳ *Khối lượng Volume < 80% trung bình 20 phiên, xuất hiện nhiều nến Fakeout.*",
-            f"• 🌏 **Phân bố Phiên Giao Dịch:** {asian_session_count}/{total_losses} lệnh ({pct_asia:.1f}%) xảy ra ở Phiên Á.",
+            f"**Loss Diagnosis Report ({total_losses} Events)**",
+            "───────────────",
+            "**Root Cause Analysis:**",
+            f"• Counter-Trend (H4 Trend): {counter_trend_count}/{total_losses} ({pct_trend:.1f}%)",
+            f"  ↳ Entry against prevailing H4 trend direction.",
+            f"• Overbought Entry (RSI > 70): {overbought_buy_count}/{total_losses} ({pct_rsi:.1f}%)",
+            f"  ↳ Fomo entry near local resistance peaks.",
+            f"• Low Liquidity / Choppy: {low_volume_count}/{total_losses} ({pct_vol:.1f}%)",
+            f"  ↳ Volume < 80% SMA20 with fakeout risk.",
+            f"• Asian Session Distribution: {asian_session_count}/{total_losses} ({pct_asia:.1f}%)",
             "",
-            "**2. Đề xuất Tối ưu hóa Code cho Antigravity:**",
-            "1. **Thêm bộ lọc Xu hướng H4:** Chỉ cho phép BUY khi `trend_h4 == 'UPTREND'` và SELL khi `trend_h4 == 'DOWNTREND'`.",
-            "2. **Thêm ngưỡng an toàn RSI:** Cấm BUY khi `RSI > 65` và cấm SELL khi `RSI < 35`.",
-            "3. **Thêm bộ lọc Thanh khoản (Volume Filter):** Chỉ kích hoạt tín hiệu khi `volume_current > volume_sma_20 * 1.1`.",
-            "─────────────────────────────────",
-            "💡 *Bạn có thể yêu cầu Antigravity áp dụng ngay các bộ lọc trên vào bản nháp chiến lược.*"
+            "**Recommended Optimization Directives:**",
+            "1. Enforce H4 trend alignment (`trend_h4 == 'Uptrend'` for Longs).",
+            "2. Bound entry RSI ceiling (`RSI < 65` for Longs, `RSI > 35` for Shorts).",
+            "3. Enforce Volume threshold (`volume >= 1.0x SMA20`).",
+            "───────────────",
+            "Run `/optimize` to apply directives into Sandbox draft."
         ]
 
         return "\n".join(report)

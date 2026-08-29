@@ -48,7 +48,7 @@ from src.live.runtime.flatten import flatten_and_cancel
 from src.live.runtime.jobstore import JobStore
 from src.live.runtime.liveness import write_heartbeat
 from src.live.runtime.scheduler import Job, Scheduler
-from src.live.runtime.triggers import Trigger, due_now
+from src.live.runtime.triggers import Trigger
 
 logger = logging.getLogger(__name__)
 

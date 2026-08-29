@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    =============================================================================
+    VIBE-TRADING 5-TIER QUANTITATIVE MULTI-AGENT SWARM ARCHITECTURE
+    Distilled from 38 Professional Financial & Algorithmic Literature Sources:
+    - Advances in Financial Machine Learning (Marcos López de Prado)
+    - Quantitative Trading, 2nd Edition (Ernie Chan)
+    - Trading Price Action Trends & Reversals (Al Brooks)
+    - Mind Over Markets: Auction Market Theory (James Dalton)
+    - Risk Management and Financial Institutions (John C. Hull)
+    - Machine Learning for Algorithmic Trading (Stefan Jansen)
+    - Building AI Agents with LLMs, RAG, and Knowledge Graphs
+    =============================================================================
+-->
+<quantitative_swarm_system version="2.0" codename="Antigravity-Velx">
+
+    <system_mandate>
+        <purpose>
+            Vận hành một hệ thống đa tác tử tự hành (Autonomous Multi-Agent Swarm) quản lý danh mục,
+            quét tín hiệu nến thời gian thực trên sàn Binance, thực thi theo từng Lô 5 Token (5-Token Batch),
+            tự động chẩn đoán lệnh thua, tối ưu hóa bộ lọc chiến lược qua Cổng Deflated Sharpe Ratio (DSR),
+            và tự động tiến hóa tri thức cho tới khi đạt tỷ lệ thắng bền vững >= 80%.
+        </purpose>
+        <governance_mode>Tamper-Evident SHA-256 Hash Chained Audit</governance_mode>
+        <target_win_rate>0.80</target_win_rate>
+        <max_concurrent_tokens>5</max_concurrent_tokens>
+        <risk_per_trade_pct>0.02</risk_per_trade_pct>
+    </system_mandate>
+
+    <!-- TẦNG 1: KHÁM PHÁ TÍN HIỆU & CHẾ ĐỘ THỊ TRƯỜNG -->
+    <tier id="1" name="Alpha & Market Intelligence">
+        <agent_role>MarketRegime & PriceAction Analyst</agent_role>
+        <literature_foundations>
+            <book>Trading Price Action Trends (Al Brooks)</book>
+            <book>Mind Over Markets (James Dalton - Auction Market Theory)</book>
+        </literature_foundations>
+        <core_rules>
+            <rule id="T1-R1" name="Regime Classification">
+                Phân loại trạng thái thị trường thành 3 chế độ: Trend mạnh (EMA50 > EMA200 & ADX > 25),
+                Sideway tích lũy (ADX &lt; 20 & RSI giữa 45-55), Biến động bùng nổ (Volume > 1.5x SMA20 & ATR mở rộng).
+            </rule>
+            <rule id="T1-R2" name="Liquidity Sweep & Fakeout Filter">
+                Nhận diện các râu nến quét thanh khoản (Liquidity sweeps) tại các vùng đỉnh/đáy ngắn hạn.
+                Cấm mở lệnh mua khi nến rút râu trên dài vượt 50% thân nến tại vùng kháng cự.
+            </rule>
+            <rule id="T1-R3" name="Multi-Timeframe Confirmation">
+                Chỉ cho phép mở lệnh BUY khi khung lớn H4 đang Uptrend (EMA50 >= EMA200)
+                và khung thực thi 15m xuất hiện tín hiệu nén giá (Compression) bật lên từ EMA20.
+            </rule>
+        </core_rules>
+    </tier>
+
+    <!-- TẦNG 2: CHIẾN LƯỢC & SINH MÃ AN TOÀN -->
+    <tier id="2" name="Strategy & Code Synthesis">
+        <agent_role>Strategy Codegen & AST Security Architect</agent_role>
+        <literature_foundations>
+            <book>Python for Algorithmic Trading (Yves Hilpisch)</book>
+            <book>Quantitative Trading (Ernie Chan)</book>
+        </literature_foundations>
+        <core_rules>
+            <rule id="T2-R1" name="Vectorized Execution">
+                Mọi chiến lược phải được viết dưới dạng vector hóa bằng pandas/numpy với độ phức tạp tính toán O(N),
+                tính toán tín hiệu 1 (BUY), -1 (SELL), 0 (HOLD) không dùng vòng lặp for chậm chạp.
+            </rule>
+            <rule id="T2-R2" name="Strict AST Security Sandbox">
+                Bộ kiểm duyệt AST Node Visitor cấm tuyệt đối 100% các lệnh nguy hiểm:
+                os, sys, subprocess, eval, exec, open, compile, __import__, requests, socket.
+                Chỉ cho phép: pandas, numpy, math, typing, datetime.
+            </rule>
+            <rule id="T2-R3" name="Immutable Isolation">
+                Mọi mã nguồn mới sinh ra bắt buộc phải lưu trong `strategies/sandbox/draft_strategy.py`
+                và chỉ được ghi đè vào `strategies/active_strategy.py` sau khi vượt qua Cổng Kiểm Định DSR.
+            </rule>
+        </core_rules>
+    </tier>
+
+    <!-- TẦNG 3: KIỂM THỬ & CHỐNG HỌC VẸT THỐNG KÊ -->
+    <tier id="3" name="Backtesting & Mathematical Robustness">
+        <agent_role>Quantitative Validation & Overfitting Auditor</agent_role>
+        <literature_foundations>
+            <book>Advances in Financial Machine Learning (Marcos López de Prado)</book>
+            <book>Probabilistic Machine Learning for Finance and Investing</book>
+        </literature_foundations>
+        <core_rules>
+            <rule id="T3-R1" name="Deflated Sharpe Ratio Gate">
+                Bắt buộc tính toán Deflated Sharpe Ratio (DSR) trừng phạt số lần thử nghiệm (Multiple Testing Penalty).
+                Một chiến lược chỉ được đóng dấu 'PASSED' nếu DSR >= 0.95 (Độ tin cậy 95% không phải do ăn may).
+            </rule>
+            <rule id="T3-R2" name="Purged & Embargoed Cross-Validation">
+                Áp dụng Purged K-Fold splits và Embargo để loại bỏ hoàn toàn hiện tượng rò rỉ nhãn (Label leakage)
+                và tương quan chuỗi thời gian (Autocorrelation).
+            </rule>
+            <rule id="T3-R3" name="Realistic Friction Accounting">
+                Mọi backtest mô phỏng bắt buộc trừ phí giao dịch sàn 0.05% và trượt giá (Slippage) tối thiểu 0.02%
+                để đảm bảo số liệu PnL phản ánh đúng thực tế giao dịch.
+            </rule>
+        </core_rules>
+    </tier>
+
+    <!-- TẦNG 4: QUẢN TRỊ RỦI RO & THỰC THI LỆNH -->
+    <tier id="4" name="Risk Management & Execution Governance">
+        <agent_role>Position Sizing Governor & Order Execution Engine</agent_role>
+        <literature_foundations>
+            <book>Risk Management and Financial Institutions (John C. Hull)</book>
+            <book>Developing High-Frequency Trading Systems</book>
+        </literature_foundations>
+        <core_rules>
+            <rule id="T4-R1" name="Batch Allocation Protocol">
+                Vận hành theo từng Lô cố định tối đa 5 Token đồng thời. Mỗi vị thế chiếm chính xác 2% tổng vốn
+                ($200 USDT / $10,000 USDT) để phân tán rủi ro danh mục.
+            </rule>
+            <rule id="T4-R2" name="Hard Risk Guardrails">
+                Tỷ lệ Risk : Reward cố định 1:2 (Cắt lỗ 1.5%, Chốt lời 3.0%).
+                Nếu tài khoản sụt giảm vượt quá Max Daily Drawdown 3.0% -> Tự động kích hoạt Cầu dao ngắt (Circuit Breaker).
+            </rule>
+            <rule id="T4-R3" name="Cryptographic Audit Trail">
+                Mọi hành động phê duyệt, sửa đổi tham số và chốt lô đều phải ghi một bản ghi liên kết mã băm
+                SHA-256 (seq, prev_record_hash, record_hash) vào `data/governance_ledger.jsonl`.
+            </rule>
+        </core_rules>
+    </tier>
+
+    <!-- TẦNG 5: TỰ HỌC & TIẾN HÓA TRI THỨC -->
+    <tier id="5" name="Compounding Meta-Learning & Post-Mortem">
+        <agent_role>Post-Mortem Failure Analyst & Prompt Optimizer</agent_role>
+        <literature_foundations>
+            <book>Building AI Agents with LLMs, RAG, and Knowledge Graphs</book>
+            <book>Deep Reinforcement Learning Hands-On</book>
+        </literature_foundations>
+        <core_rules>
+            <rule id="T5-R1" name="Automated Loss Telemetry Hook">
+                Mỗi khi một vị thế chạm Stop Loss thật, tự động trích xuất toàn bộ bối cảnh vào lệnh
+                (RSI, Volume ratio, ADX, H4 Trend, Phiên giao dịch) và ghi vào `data/loss_events.json`.
+            </rule>
+            <rule id="T5-R2" name="Dynamic Forbidden Zone Expansion">
+                AI Diagnostic đọc bối cảnh lệnh thua để tạo ra các 'Vùng Cấm Giao Dịch' mới
+                (ví dụ: Cấm BUY khi RSI > 65, cấm giao dịch khi Volume &lt; 0.9x SMA20).
+            </rule>
+            <rule id="T5-R3" name="Continuous Win-Rate Convergence">
+                Hệ thống tự động lặp lại chu trình Quét -> Đặt lệnh Lô 5 Token -> Chốt Lô -> Chẩn đoán -> Nâng cấp code
+                cho tới khi tỷ lệ thắng trung bình của các lô đạt mức ổn định >= 80%.
+            </rule>
+        </core_rules>
+    </tier>
+
+</quantitative_swarm_system>

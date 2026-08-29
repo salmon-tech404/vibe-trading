@@ -1,0 +1,140 @@
+//@version=6
+indicator("AETHER-QUANT [Institutional Alpha & Regime Engine]", shorttitle="AETHER-ALPHA", overlay=true, max_lines_count=500, max_boxes_count=500, max_labels_count=500)
+
+// ==============================================================================
+// 1. INPUT SETTINGS & CONFIGURATION
+// ==============================================================================
+grp_kama = "Kaufman Adaptive Trend Engine"
+er_length = input.int(14, "Efficiency Ratio (ER) Period", minval=2, group=grp_kama)
+fast_sc = input.int(2, "Fast Smoothing Constant", minval=1, group=grp_kama)
+slow_sc = input.int(30, "Slow Smoothing Constant", minval=1, group=grp_kama)
+er_threshold = input.float(0.45, "ER Trend Threshold", minval=0.1, maxval=0.9, step=0.05, group=grp_kama)
+
+grp_amt = "Auction Market Theory (Value Area & POC)"
+amt_lookback = input.int(30, "Volume Profile Lookback Bars", minval=10, group=grp_amt)
+va_percentage = input.float(0.70, "Value Area Mass %", minval=0.5, maxval=0.9, step=0.05, group=grp_amt)
+
+grp_meta = "Bayesian Meta-Labeling & Risk Filters"
+atr_length = input.int(14, "ATR Volatility Period", minval=1, group=grp_meta)
+pt_multiplier = input.float(2.0, "Take-Profit Multiplier (u)", minval=0.5, step=0.1, group=grp_meta)
+sl_multiplier = input.float(1.5, "Stop-Loss Multiplier (l)", minval=0.5, step=0.1, group=grp_meta)
+
+// ==============================================================================
+// 2. LAYER 2 & 4: KAUFMAN EFFICIENCY RATIO & ADAPTIVE TREND (KAMA)
+// ==============================================================================
+change_price = math.abs(close - close[er_length])
+volatility_sum = math.sum(math.abs(close - close[1]), er_length)
+er = volatility_sum != 0 ? change_price / volatility_sum : 0.0
+
+fast_alpha = 2.0 / (fast_sc + 1.0)
+slow_alpha = 2.0 / (slow_sc + 1.0)
+sc = math.pow(er * (fast_alpha - slow_alpha) + slow_alpha, 2.0)
+
+var float kama = close
+kama := nz(kama[1]) + sc * (close - nz(kama[1]))
+
+kama_trend_up = close > kama and er >= er_threshold
+kama_trend_down = close < kama and er >= er_threshold
+kama_chop = er < er_threshold
+
+kama_color = kama_trend_up ? color.new(#00E676, 0) : (kama_trend_down ? color.new(#FF5252, 0) : color.new(#FFA726, 40))
+plot(kama, "KAMA Adaptive Trend", color=kama_color, linewidth=2)
+
+// ==============================================================================
+// 3. LAYER 2: AUCTION MARKET VALUE AREA (POC, VAH, VAL)
+// ==============================================================================
+highest_high = ta.highest(high, amt_lookback)
+lowest_low = ta.lowest(low, amt_lookback)
+mid_poc = ta.vwma(close, amt_lookback)
+va_width = (highest_high - lowest_low) * (1.0 - va_percentage) * 0.5
+vah = highest_high - va_width
+val = lowest_low + va_width
+
+plot(vah, "Value Area High (VAH)", color=color.new(#29B6F6, 30), linewidth=1, style=plot.style_line)
+plot(mid_poc, "Point of Control (POC)", color=color.new(#FFEB3B, 10), linewidth=2, style=plot.style_line)
+plot(val, "Value Area Low (VAL)", color=color.new(#AB47BC, 30), linewidth=1, style=plot.style_line)
+
+// ==============================================================================
+// 4. LAYER 4: ORDER FLOW DELTA ABSORPTION & DIVERGENCE
+// ==============================================================================
+vol_delta = (close >= open ? volume : -volume)
+cum_delta = ta.cum(vol_delta)
+delta_change = cum_delta - cum_delta[10]
+price_change = close - close[10]
+
+bullish_absorption = (close <= val or low <= val) and delta_change > 0 and price_change < 0
+bearish_absorption = (close >= vah or high >= vah) and delta_change < 0 and price_change > 0
+
+plotshape(bullish_absorption, "Bullish Institutional Absorption", shape.triangleup, location.belowbar, color.new(#00E676, 0), size=size.small, text="ABSORP")
+plotshape(bearish_absorption, "Bearish Institutional Absorption", shape.triangledown, location.abovebar, color.new(#FF1744, 0), size=size.small, text="ABSORP")
+
+// ==============================================================================
+// 5. LAYER 3: BAYESIAN REGIME PROXY CLASSIFIER
+// ==============================================================================
+atr_val = ta.atr(atr_length)
+historical_atr_mean = ta.sma(atr_val, 50)
+
+string current_regime = "MEAN_REVERTING_CHOP"
+color regime_color = color.orange
+float epistemic_uncertainty = 0.04
+
+if er >= er_threshold and atr_val <= historical_atr_mean * 1.2
+    current_regime := "LOW_VOL_BULL"
+    regime_color := color.green
+    epistemic_uncertainty := 0.02
+else if er >= er_threshold and atr_val > historical_atr_mean * 1.2
+    current_regime := "HIGH_VOL_EXPANSION"
+    regime_color := color.teal
+    epistemic_uncertainty := 0.05
+else if atr_val > historical_atr_mean * 2.0
+    current_regime := "LIQUIDITY_STRESS"
+    regime_color := color.red
+    epistemic_uncertainty := 0.14
+else
+    current_regime := "MEAN_REVERTING_CHOP"
+    regime_color := color.orange
+    epistemic_uncertainty := 0.06
+
+// ==============================================================================
+// 6. LAYER 5 & 7: CONVICTION SIGNALS & SIZING
+// ==============================================================================
+bool buy_signal = (kama_trend_up and ta.crossover(close, kama)) or (bullish_absorption and ta.crossover(close, val))
+bool sell_signal = (kama_trend_down and ta.crossunder(close, kama)) or (bearish_absorption and ta.crossunder(close, vah))
+
+float stop_loss_price = buy_signal ? close - sl_multiplier * atr_val : (sell_signal ? close + sl_multiplier * atr_val : na)
+float take_profit_price = buy_signal ? close + pt_multiplier * atr_val : (sell_signal ? close - pt_multiplier * atr_val : na)
+
+if buy_signal
+    label.new(bar_index, low - atr_val * 0.5, "🟢 AETHER BUY\nEntry: " + str.tostring(close, "#.##") + "\nSL: " + str.tostring(stop_loss_price, "#.##") + "\nTP: " + str.tostring(take_profit_price, "#.##"), color=color.green, textcolor=color.white, style=label.style_label_up, size=size.normal)
+
+if sell_signal
+    label.new(bar_index, high + atr_val * 0.5, "🔴 AETHER SELL\nEntry: " + str.tostring(close, "#.##") + "\nSL: " + str.tostring(stop_loss_price, "#.##") + "\nTP: " + str.tostring(take_profit_price, "#.##"), color=color.red, textcolor=color.white, style=label.style_label_down, size=size.normal)
+
+// ==============================================================================
+// 7. REAL-TIME HUD DASHBOARD
+// ==============================================================================
+var table hud = table.new(position.top_right, 2, 6, bgcolor=color.new(#131722, 10), border_color=color.new(#374151, 0), border_width=1)
+if barstate.islast
+    table.cell(hud, 0, 0, "🏛️ AETHER-QUANT HUD", bgcolor=color.new(#1E222D, 0), text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 0, "METRIC / STATUS", bgcolor=color.new(#1E222D, 0), text_color=color.white, text_size=size.small)
+    
+    table.cell(hud, 0, 1, "Market Regime", text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 1, current_regime, bgcolor=regime_color, text_color=color.white, text_size=size.small)
+    
+    table.cell(hud, 0, 2, "Kaufman ER", text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 2, str.tostring(er, "#.##") + (er >= er_threshold ? " (Clean)" : " (Chop)"), text_color=er >= er_threshold ? color.green : color.orange, text_size=size.small)
+    
+    table.cell(hud, 0, 3, "Epistemic Uncertainty", text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 3, str.tostring(epistemic_uncertainty, "#.####"), text_color=epistemic_uncertainty <= 0.05 ? color.green : color.red, text_size=size.small)
+    
+    table.cell(hud, 0, 4, "Value Area Range", text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 4, "$" + str.tostring(val, "#.##") + " - $" + str.tostring(vah, "#.##"), text_color=color.aqua, text_size=size.small)
+    
+    table.cell(hud, 0, 5, "Active Volatility (ATR)", text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 5, "$" + str.tostring(atr_val, "#.##"), text_color=color.yellow, text_size=size.small)
+
+// ==============================================================================
+// 8. AUTOMATED ALERTS
+// ==============================================================================
+alertcondition(buy_signal, title="🟢 AETHER Quant BUY Alert", message='{"action": "BUY", "symbol": "{{ticker}}", "price": {{close}}, "sl": ' + str.tostring(stop_loss_price) + ', "tp": ' + str.tostring(take_profit_price) + '}')
+alertcondition(sell_signal, title="🔴 AETHER Quant SELL Alert", message='{"action": "SELL", "symbol": "{{ticker}}", "price": {{close}}, "sl": ' + str.tostring(stop_loss_price) + ', "tp": ' + str.tostring(take_profit_price) + '}')

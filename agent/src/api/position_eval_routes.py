@@ -1,4 +1,4 @@
-﻿"""FastAPI Routes for In-Flight Position Evaluation driven by Physical XML Prompts and LLM."""
+"""FastAPI Routes for In-Flight Position Evaluation driven by Physical XML Prompts and LLM."""
 
 from __future__ import annotations
 
