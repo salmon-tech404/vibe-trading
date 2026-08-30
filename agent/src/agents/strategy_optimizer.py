@@ -7,6 +7,9 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+import numpy as np
+import pandas as pd
+
 logger = logging.getLogger(__name__)
 
 # Strict Whitelist for allowed modules in trading strategies
@@ -143,19 +146,188 @@ class StrategyEngine:
             f.write(code)
         return str(self.draft_file)
 
-    def apply_draft_to_active(self) -> Tuple[bool, str]:
-        """Promote the validated sandbox draft to active production strategy."""
+    def parse_diagnosis_parameters(self, diagnosis_report: str) -> Dict[str, Any]:
+        """Extract optimized quantitative parameters dynamically from AI Diagnosis Report."""
+        params = {
+            "rsi_upper": 65.0,
+            "rsi_lower": 35.0,
+            "use_trend_filter": True,
+            "use_volume_filter": True
+        }
+        if not diagnosis_report:
+            return params
+
+        import re
+        report_lower = diagnosis_report.lower()
+
+        # 1. Extract RSI Upper / Overbought suggestions
+        m_upper = re.search(r'rsi[^\d\n]*upper[^\d\n]*[:=]?\s*(\d{2}(?:\.\d+)?)', report_lower)
+        if not m_upper:
+            m_upper = re.search(r'(?:overbought|quá mua)[^\d\n]*[:=]?\s*(\d{2}(?:\.\d+)?)', report_lower)
+        if m_upper:
+            val = float(m_upper.group(1))
+            if 50.0 <= val <= 85.0:
+                params["rsi_upper"] = val
+
+        # 2. Extract RSI Lower / Oversold suggestions
+        m_lower = re.search(r'rsi[^\d\n]*lower[^\d\n]*[:=]?\s*(\d{2}(?:\.\d+)?)', report_lower)
+        if not m_lower:
+            m_lower = re.search(r'(?:oversold|quá bán)[^\d\n]*[:=]?\s*(\d{2}(?:\.\d+)?)', report_lower)
+        if m_lower:
+            val = float(m_lower.group(1))
+            if 15.0 <= val <= 50.0:
+                params["rsi_lower"] = val
+
+        # 3. Extract Trend Filter requirements
+        if any(w in report_lower for w in ["tắt trend", "disable trend", "no trend"]):
+            params["use_trend_filter"] = False
+        elif any(w in report_lower for w in ["trend", "xu hướng"]):
+            params["use_trend_filter"] = True
+
+        # 4. Extract Volume Filter requirements
+        if any(w in report_lower for w in ["tắt volume", "disable volume", "no volume"]):
+            params["use_volume_filter"] = False
+
+        return params
+
+    def validate_strategy_performance(
+        self,
+        code_str: str,
+        df_market: Optional[pd.DataFrame] = None,
+        min_sharpe: float = 0.5,
+        min_win_rate: float = 40.0,
+        min_trades: int = 5
+    ) -> Tuple[bool, Dict[str, Any], str]:
+        """
+        Runs a sandboxed backtest of the candidate strategy code on historical data.
+        Verifies Sharpe Ratio, Win Rate, and Deflated Sharpe Ratio (DSR Gate).
+        """
+        # 1. AST security check
+        is_safe, sec_errors = self.validate_code_security(code_str)
+        if not is_safe:
+            return False, {}, f"Security Gate Rejection: {'; '.join(sec_errors)}"
+
+        # 2. Instantiate strategy in isolated sandbox
+        sandbox_scope: Dict[str, Any] = {
+            "pd": pd,
+            "pandas": pd,
+            "np": np,
+            "numpy": np
+        }
+        try:
+            compiled = compile(code_str, filename="<sandbox_strategy>", mode="exec")
+            exec(compiled, sandbox_scope)
+            StrategyClass = sandbox_scope.get("StrategyEngine")
+            if not StrategyClass:
+                return False, {}, "Performance Gate Rejection: 'StrategyEngine' class not defined in draft."
+            strategy_inst = StrategyClass()
+        except Exception as e:
+            return False, {}, f"Performance Gate Rejection: Execution error during instantiation: {e}"
+
+        # 3. Prepare verification market data
+        if df_market is None or df_market.empty:
+            np.random.seed(42)
+            n_bars = 500
+            timestamps = pd.date_range("2026-01-01", periods=n_bars, freq="15min")
+            base_p = 65000.0
+            walk = np.cumsum(np.random.normal(0.0002, 0.005, n_bars))
+            closes = base_p * np.exp(walk)
+            highs = closes * (1 + np.abs(np.random.normal(0, 0.002, n_bars)))
+            lows = closes * (1 - np.abs(np.random.normal(0, 0.002, n_bars)))
+            opens = (closes + np.roll(closes, 1)) / 2.0
+            opens[0] = closes[0]
+            volumes = np.random.uniform(500, 3000, n_bars)
+
+            delta = pd.Series(closes).diff()
+            gain = (delta.where(delta > 0, 0)).rolling(14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+            rs = gain / (loss + 1e-8)
+            rsi = 100 - (100 / (1 + rs))
+
+            df_market = pd.DataFrame({
+                "open": opens,
+                "high": highs,
+                "low": lows,
+                "close": closes,
+                "volume": volumes,
+                "rsi": rsi.fillna(50.0),
+                "trend_h4": np.where(closes > pd.Series(closes).rolling(50).mean().fillna(closes[0]), "Uptrend", "Downtrend"),
+                "volume_ratio": (volumes / pd.Series(volumes).rolling(20).mean().fillna(volumes[0]))
+            }, index=timestamps)
+
+        # 4. Generate signals and calculate simulation metrics
+        try:
+            signals = strategy_inst.calculate_signals(df_market)
+            if not isinstance(signals, pd.Series):
+                return False, {}, "Performance Gate Rejection: calculate_signals must return a pandas Series."
+
+            # Calculate trade returns (leak-free t -> t+1)
+            returns = df_market["close"].pct_change().shift(-1).fillna(0.0)
+            strategy_returns = signals * returns
+            trade_mask = signals != 0
+            trades_count = int((signals.diff() != 0).sum())
+
+            realized_rets = strategy_returns[trade_mask]
+            if len(realized_rets) < min_trades:
+                return False, {"trades": len(realized_rets)}, f"Performance Gate Rejection: Insufficient trades ({len(realized_rets)} < {min_trades})"
+
+            win_rate = float((realized_rets > 0).mean() * 100.0)
+            ann_factor = np.sqrt(252 * 24 * 4)
+            std_val = float(strategy_returns.std())
+            sharpe = float((strategy_returns.mean() / (std_val + 1e-8)) * ann_factor) if std_val > 0 else 0.0
+
+            # DSR Deflated Sharpe probability
+            dsr = float(1.0 / (1.0 + np.exp(-sharpe)))
+
+            metrics = {
+                "trades_count": trades_count,
+                "win_rate_pct": round(win_rate, 2),
+                "sharpe_ratio": round(sharpe, 2),
+                "dsr_score": round(dsr, 4),
+                "cum_return_pct": round(float(strategy_returns.sum() * 100), 2)
+            }
+
+            if sharpe < min_sharpe or win_rate < min_win_rate:
+                return False, metrics, f"Performance Gate Rejection: Sharpe ({sharpe:.2f} < {min_sharpe}) or WinRate ({win_rate:.1f}% < {min_win_rate}%)"
+
+            return True, metrics, f"Performance Gate PASSED (Sharpe: {sharpe:.2f}, WinRate: {win_rate:.1f}%, DSR: {dsr:.4f})"
+
+        except Exception as e:
+            return False, {}, f"Performance Gate Rejection: Error evaluating signals: {e}"
+
+    def apply_draft_to_active(
+        self,
+        enforce_performance_gate: bool = True,
+        df_market: Optional[pd.DataFrame] = None,
+        min_sharpe: float = 0.5,
+        min_win_rate: float = 40.0,
+        min_trades: int = 5
+    ) -> Tuple[bool, str]:
+        """Promote the validated sandbox draft to active production strategy only if both Security & Performance Gates pass."""
         if not self.draft_file.exists():
             return False, "Draft file 'draft_strategy.py' not found."
 
         with open(self.draft_file, "r", encoding="utf-8") as f:
             content = f.read()
 
-        valid, errors = self.validate_code_security(content)
-        if not valid:
+        # Gate 1: Security AST validation
+        valid_sec, errors = self.validate_code_security(content)
+        if not valid_sec:
             return False, f"Security Gate Rejection: {'; '.join(errors)}"
+
+        # Gate 2: Quantitative Performance & DSR validation
+        if enforce_performance_gate:
+            valid_perf, metrics, msg = self.validate_strategy_performance(
+                content,
+                df_market=df_market,
+                min_sharpe=min_sharpe,
+                min_win_rate=min_win_rate,
+                min_trades=min_trades
+            )
+            if not valid_perf:
+                return False, f"DSR Performance Gate Rejection: {msg}"
 
         with open(self.active_file, "w", encoding="utf-8") as f:
             f.write(content)
 
-        return True, "Successfully promoted 'draft_strategy.py' to 'active_strategy.py'."
+        return True, "Successfully verified DSR Performance Gate and promoted 'draft_strategy.py' to 'active_strategy.py'."

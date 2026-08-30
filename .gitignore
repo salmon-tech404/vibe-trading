@@ -161,3 +161,8 @@ docs/screenshots/agent-run.png
 docs/screenshots/boot.png
 docs/trading_knowledge_base
 *.epub
+
+# --- Sandbox temporary drafts ---
+strategies/sandbox/*
+!strategies/sandbox/.gitkeep
+

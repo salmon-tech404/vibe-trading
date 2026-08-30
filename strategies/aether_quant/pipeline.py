@@ -118,7 +118,7 @@ class AetherQuantEngine:
             a_arb = pd.Series(0.0, index=df_p.index, name="alpha_stat_arb_spread")
 
         raw_factors = pd.concat([a_ofi, a_trend, a_amt, a_arb], axis=1).fillna(0.0)
-        ortho_factors = symmetric_lowdin_orthogonalization(raw_factors)
+        ortho_factors = symmetric_lowdin_orthogonalization(raw_factors, warmup_bars=warmup_bars)
 
         # 3. Regime Detection Features
         regime_features = np.column_stack([
@@ -149,14 +149,14 @@ class AetherQuantEngine:
 
         # Predict out-of-sample uncertainty
         prob_mean, epi_var, alea_var = self.meta_learner.predict_uncertainty(ortho_factors.values)
-        baseline_epi_var = max(1e-4, float(np.median(epi_var[:warmup_bars])))
+        baseline_epi_var = max(1e-3, float(np.percentile(epi_var[:warmup_bars], 90)))
 
         # 6. Multi-Asset HRP Allocation
         returns_dict = {a: market_data[a]['close'].pct_change().fillna(0.0) for a in self.assets}
         returns_df = pd.DataFrame(returns_dict).fillna(0.0)
         hrp_weights = self.hrp_allocator.allocate(returns_df.iloc[:warmup_bars])
 
-        # 7. Simulation Loop with Dynamic Sizing, Friction, and Risk Controls
+        # 7. Simulation Loop with Dynamic Sizing, Friction, and Risk Controls (Zero Lookahead Bias)
         portfolio_equity = [self.capital]
         daily_returns = []
         positions = {a: 0.0 for a in self.assets}
@@ -168,10 +168,15 @@ class AetherQuantEngine:
         for t in range(warmup_bars, N):
             p_curr = df_p['close'].iloc[t]
             p_prev = df_p['close'].iloc[t - 1]
-            curr_equity = portfolio_equity[-1]
+            prev_equity = portfolio_equity[-1]
 
-            # Risk check: Peak-to-trough intraday drawdown
-            peak_equity = max(portfolio_equity)
+            # 1. Realize Mark-to-Market PnL on positions carried over from bar t-1 (NO LOOKAHEAD)
+            held_position = positions[primary_asset]
+            pos_pnl = held_position * (p_curr - p_prev)
+            curr_equity = prev_equity + pos_pnl
+
+            # 2. Risk check: Peak-to-trough intraday drawdown
+            peak_equity = max(max(portfolio_equity), curr_equity)
             dd_pct = (peak_equity - curr_equity) / peak_equity
 
             # EVT Tail Risk check
@@ -192,25 +197,29 @@ class AetherQuantEngine:
 
             if cb_status['halt_trading']:
                 circuit_breaker_halts += 1
-                # Liquidate position
-                if abs(positions[primary_asset]) > 1e-4:
+                # Liquidate existing position
+                if abs(held_position) > 1e-4:
                     fill = self.friction_sim.simulate_fill(
-                        side=int(-np.sign(positions[primary_asset])),
-                        order_size=abs(positions[primary_asset]),
+                        side=int(-np.sign(held_position)),
+                        order_size=abs(held_position),
                         mid_price=p_curr,
                         bid_ask_spread=0.0005 * p_curr,
                         daily_volume=float(df_p['volume'].iloc[t] * 24),
                         daily_volatility=float(gk_vol.iloc[t])
                     )
-                    total_fees_paid += fill['fee_paid']
-                    total_slippage_paid += fill['slippage_per_unit'] * abs(positions[primary_asset])
+                    fee_paid = fill['fee_paid']
+                    slip_paid = fill['slippage_per_unit'] * abs(held_position)
+                    total_fees_paid += fee_paid
+                    total_slippage_paid += slip_paid
+                    curr_equity -= (fee_paid + slip_paid)
                     positions[primary_asset] = 0.0
 
                 portfolio_equity.append(curr_equity)
-                daily_returns.append(0.0)
+                bar_pct_return = (curr_equity - prev_equity) / prev_equity
+                daily_returns.append(bar_pct_return)
                 continue
 
-            # Dynamic Bet Sizing
+            # 3. Dynamic Bet Sizing & Target Rebalancing for bar t -> t+1
             conviction_size = self.bet_sizer.calculate_sizing(
                 prob_success=prob_mean[t],
                 epistemic_variance=epi_var[t],
@@ -222,8 +231,8 @@ class AetherQuantEngine:
             target_dollar = target_direction * conviction_size * hrp_weights[primary_asset] * curr_equity
             target_units = target_dollar / p_curr
 
-            # Execution & Frictions
-            order_units = target_units - positions[primary_asset]
+            # 4. Execution & Frictions on rebalancing orders
+            order_units = target_units - held_position
             if abs(order_units) > 1e-4:
                 fill = self.friction_sim.simulate_fill(
                     side=int(np.sign(order_units)),
@@ -233,17 +242,16 @@ class AetherQuantEngine:
                     daily_volume=float(df_p['volume'].iloc[t] * 24),
                     daily_volatility=float(gk_vol.iloc[t])
                 )
-                total_slippage_paid += fill['slippage_per_unit'] * abs(order_units)
-                total_fees_paid += fill['fee_paid']
+                fee_paid = fill['fee_paid']
+                slip_paid = fill['slippage_per_unit'] * abs(order_units)
+                total_slippage_paid += slip_paid
+                total_fees_paid += fee_paid
+                curr_equity -= (fee_paid + slip_paid)
                 positions[primary_asset] = target_units
                 trades_count += 1
 
-            # Portfolio Mark-to-Market PnL
-            pos_pnl = positions[primary_asset] * (p_curr - p_prev)
-            new_equity = curr_equity + pos_pnl - (fill['fee_paid'] if abs(order_units) > 1e-4 else 0.0)
-            bar_pct_return = (new_equity - curr_equity) / curr_equity
-            
-            portfolio_equity.append(new_equity)
+            bar_pct_return = (curr_equity - prev_equity) / prev_equity
+            portfolio_equity.append(curr_equity)
             daily_returns.append(bar_pct_return)
 
             # Online Monitoring

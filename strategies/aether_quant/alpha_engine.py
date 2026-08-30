@@ -11,10 +11,11 @@ import pandas as pd
 from typing import Dict, List, Optional, Tuple, Union
 
 
-def symmetric_lowdin_orthogonalization(factors_df: pd.DataFrame) -> pd.DataFrame:
+def symmetric_lowdin_orthogonalization(factors_df: pd.DataFrame, warmup_bars: Optional[int] = None) -> pd.DataFrame:
     """
     Symmetric Lowdin Orthogonalization: F_perp = V * Lambda^(-1/2) * V^T * F
     Eliminates multicollinearity while minimizing distance to original factor definitions.
+    Prevents whole-sample data leakage by fitting transformation on warmup/historical window.
     """
     if factors_df.empty or factors_df.shape[1] <= 1:
         return factors_df
@@ -23,11 +24,18 @@ def symmetric_lowdin_orthogonalization(factors_df: pd.DataFrame) -> pd.DataFrame
     F = clean_df.values
     N, M = F.shape
 
-    # Standardize factors
-    F_std = (F - np.mean(F, axis=0)) / (np.std(F, axis=0) + 1e-8)
+    # Determine reference slice to compute covariance without future leakage
+    ref_F = F[:warmup_bars] if (warmup_bars and warmup_bars >= M and warmup_bars < N) else F
 
-    # Factor covariance
-    cov = np.cov(F_std, rowvar=False)
+    mean_vec = np.mean(ref_F, axis=0)
+    std_vec = np.std(ref_F, axis=0) + 1e-8
+
+    # Standardize factors using reference parameters
+    ref_F_std = (ref_F - mean_vec) / std_vec
+    F_std = (F - mean_vec) / std_vec
+
+    # Factor covariance fit on reference window
+    cov = np.cov(ref_F_std, rowvar=False)
     if M == 1:
         cov = np.array([[cov]])
 

@@ -218,16 +218,21 @@ class BatchLoopCoordinator:
         loss_events = self.loss_collector.load_events()
         diagnosis_report = self.diagnostic_agent.diagnose_losses(loss_events)
 
-        # 5. Trigger Strategy Optimizer to auto-tune in Sandbox
+        # 5. Extract dynamic quantitative parameters and create candidate draft in Sandbox
+        tuned_params = self.optimizer.parse_diagnosis_parameters(diagnosis_report)
         draft_path = self.optimizer.create_initial_draft(
-            rsi_upper=65.0,
-            rsi_lower=35.0,
-            use_trend_filter=True,
-            use_volume_filter=True
+            rsi_upper=tuned_params["rsi_upper"],
+            rsi_lower=tuned_params["rsi_lower"],
+            use_trend_filter=tuned_params["use_trend_filter"],
+            use_volume_filter=tuned_params["use_volume_filter"]
         )
 
-        # 6. Check DSR Gate and promote if verified
-        self.optimizer.apply_draft_to_active()
+        # 6. Verify DSR Performance Gate and only promote if verified
+        promoted, promo_msg = self.optimizer.apply_draft_to_active(enforce_performance_gate=True)
+        if promoted:
+            logger.info(f"✅ Strategy Auto-Tuning SUCCESS: {promo_msg}")
+        else:
+            logger.warning(f"⚠️ Strategy Auto-Tuning REJECTED by Gate: {promo_msg}")
 
         # 7. Record Batch to Cryptographic Governance Ledger
         ledger_res = append_record(

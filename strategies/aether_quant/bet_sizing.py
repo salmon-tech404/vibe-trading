@@ -47,7 +47,7 @@ class UncertaintyPenalizedKellySizer:
         # When p > 0.45, scales linearly up to 1.0
         # If Kelly: (p*(b+1)-1)/b
         raw_kelly = (p * (self.b + 1.0) - 1.0) / self.b
-        conviction = np.where(raw_kelly > 0, raw_kelly, np.maximum(0.15, p))
+        conviction = np.where(raw_kelly > 0, raw_kelly, 0.0)
 
         # 2. Epistemic uncertainty penalty
         norm_epi = np.maximum(0.0, epi_var / max(baseline_epistemic_var, 1e-6))
