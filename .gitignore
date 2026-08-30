@@ -159,3 +159,5 @@ assets/*.mp4
 demo/
 docs/screenshots/agent-run.png
 docs/screenshots/boot.png
+docs/trading_knowledge_base
+*.epub
